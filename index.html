@@ -8,97 +8,181 @@
     <style>
         body { font-family: sans-serif; background: #f4f4f4; padding: 15px; color: #333; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #f39c12; margin-top: 0; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .info { background: #fffde7; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.9em; border-left: 4px solid #fbc02d; }
-        #main-button { background: #f39c12; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        h2 { color: #f39c12; margin-top: 0; text-align: center; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 0.9em; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .info { background: #fffde7; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.85em; border-left: 4px solid #fbc02d; line-height: 1.4; }
+        .hidden { display: none; }
+        #main-button { background: #f39c12; color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; transition: 0.3s; }
+        #main-button:active { transform: scale(0.98); background: #e67e22; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Конфигуратор SUSPA</h2>
+    <h2>SUSPA Liftline</h2>
     
-    <label>Выберите серию:</label>
-    <select id="series" onchange="updateSpecs()">
-        <option value="16-1">Серия 16-1 (50-400N)</option>
-        <option value="16-2">Серия 16-2 (80-750N)</option>
-        <option value="16-4">Серия 16-4 (100-1200N)</option>
-        <option value="16-6">Серия 16-6 (200-2000N)</option>
+    <label>1. Выберите серию:</label>
+    <select id="series" onchange="handleSeriesChange()">
+        <option value="16-1">Серия 16-1 (Ø15/6)</option>
+        <option value="16-2">Серия 16-2 (Ø18.5/8)</option>
+        <option value="16-4">Серия 16-4 (Ø22/10)</option>
+        <option value="16-6">Серия 16-6 (Ø28/14)</option>
     </select>
 
-    <label>Тип соединения:</label>
-    <select id="connection">
-        <option value="threaded">Резьбовое соединение</option>
-        <option value="welded">Сварное соединение (Проушины)</option>
+    <label>2. Тип соединения:</label>
+    <select id="connection" onchange="handleConnectionTypeChange()">
+        <option value="threaded">Резьба (M6/M8/M10)</option>
+        <option id="opt-welded" value="welded">Сварное (Проушины)</option>
     </select>
 
-    <label>Ход штока (мм):</label>
-    <input type="number" id="stroke" placeholder="Например: 100">
-
-    <label>Длина цилиндра (без учета резьбы, мм):</label>
-    <input type="number" id="length" placeholder="Например: 150">
-
-    <label>Требуемое усилие (N):</label>
-    <input type="number" id="force" placeholder="Введите значение">
-
-    <div class="info" id="spec-info">
-        Выберите серию для просмотра ограничений.
+    <!-- Блок для ручного ввода (если резьба) -->
+    <div id="manual-inputs">
+        <label>Ход штока (мм):</label>
+        <input type="number" id="stroke-manual" placeholder="Напр: 100">
+        <label>Длина L (без резьбы, мм):</label>
+        <input type="number" id="length-manual" placeholder="Напр: 250">
     </div>
 
-    <button id="main-button" onclick="sendData()">ОФОРМИТЬ ЗАКАЗ</button>
+    <!-- Блок для выбора из таблицы (если сварное) -->
+    <div id="welded-inputs" class="hidden">
+        <label>Выберите параметры (Ход / Длина L):</label>
+        <select id="welded-select"></select>
+    </div>
+
+    <label>3. Требуемое усилие (N):</label>
+    <input type="number" id="force" placeholder="Введите значение">
+
+    <div class="info" id="spec-info"></div>
+
+    <button id="main-button" onclick="sendData()">ОТПРАВИТЬ ЗАКАЗ</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    const specs = {
+    // Данные из таблиц каталога (Сварные соединения)
+    const weldedCatalog = {
+        "16-1": [
+            {stroke: 20, l: 106}, {stroke: 40, l: 146}, {stroke: 45, l: 160},
+            {stroke: 55, l: 179}, {stroke: 60, l: 186}, {stroke: 80, l: 224},
+            {stroke: 100, l: 264}, {stroke: 110, l: 306}, {stroke: 120, l: 305.5}, {stroke: 150, l: 366}
+        ],
+        "16-2": [
+            {stroke: 60, l: 206.5}, {stroke: 80, l: 246.5}, {stroke: 90, l: 256.5},
+            {stroke: 100, l: 286.5}, {stroke: 120, l: 316.5}, {stroke: 120, l: 326.5},
+            {stroke: 133, l: 354.5}, {stroke: 140, l: 364.5}, {stroke: 160, l: 407.5},
+            {stroke: 178, l: 444}, {stroke: 200, l: 485.5}, {stroke: 220, l: 525.5}, {stroke: 250, l: 586.5}
+        ],
+        "16-4": [
+            {stroke: 95, l: 283}, {stroke: 145, l: 383}, {stroke: 195, l: 483},
+            {stroke: 245, l: 586}, {stroke: 295, l: 683}, {stroke: 345, l: 783},
+            {stroke: 395, l: 883}, {stroke: 445, l: 983}, {stroke: 495, l: 1083}
+        ]
+    };
+
+    const seriesSpecs = {
         "16-1": { minF: 50, maxF: 400, rod: 6, tube: 15 },
         "16-2": { minF: 80, maxF: 750, rod: 8, tube: 18.5 },
         "16-4": { minF: 100, maxF: 1200, rod: 10, tube: 22 },
         "16-6": { minF: 200, maxF: 2000, rod: 14, tube: 28 }
     };
 
-    function updateSpecs() {
-        const s = document.getElementById('series').value;
-        const info = specs[s];
+    function handleSeriesChange() {
+        const series = document.getElementById('series').value;
+        const weldedOpt = document.getElementById('opt-welded');
+        const connSelect = document.getElementById('connection');
+
+        // Логика для 16-6: Сварных не бывает
+        if (series === "16-6") {
+            weldedOpt.disabled = true;
+            connSelect.value = "threaded";
+            alert("Для серии 16-6 доступны только резьбовые соединения.");
+        } else {
+            weldedOpt.disabled = false;
+        }
+
+        updateWeldedList(series);
+        updateUI();
+    }
+
+    function handleConnectionTypeChange() {
+        updateUI();
+    }
+
+    function updateUI() {
+        const connType = document.getElementById('connection').value;
+        const series = document.getElementById('series').value;
+        const manualBox = document.getElementById('manual-inputs');
+        const weldedBox = document.getElementById('welded-inputs');
+
+        if (connType === 'welded' && series !== '16-6') {
+            manualBox.classList.add('hidden');
+            weldedBox.classList.remove('hidden');
+        } else {
+            manualBox.classList.remove('hidden');
+            weldedBox.classList.add('hidden');
+        }
+
+        const spec = seriesSpecs[series];
         document.getElementById('spec-info').innerHTML = 
-            `Серия ${s}: Шток Ø${info.rod}мм, Трубка Ø${info.tube}мм. <br>Допустимое усилие: ${info.minF} - ${info.maxF} Ньютонов.`;
+            `Серия ${series}: Шток Ø${spec.rod}мм, Трубка Ø${spec.tube}мм.<br>` +
+            `Допустимое усилие: <b>${spec.minF}N — ${spec.maxF}N</b>`;
+    }
+
+    function updateWeldedList(series) {
+        const select = document.getElementById('welded-select');
+        select.innerHTML = "";
+        const items = weldedCatalog[series] || [];
+        
+        items.forEach(item => {
+            let opt = document.createElement('option');
+            opt.value = `${item.stroke}|${item.l}`;
+            opt.innerHTML = `Ход: ${item.stroke} мм / L: ${item.l} мм`;
+            select.appendChild(opt);
+        });
     }
 
     function sendData() {
         const series = document.getElementById('series').value;
-        const connection = document.getElementById('connection').value;
-        const stroke = document.getElementById('stroke').value;
-        const length = document.getElementById('length').value;
+        const connType = document.getElementById('connection').value;
         const force = parseInt(document.getElementById('force').value);
+        
+        let stroke, length;
 
-        const limit = specs[series];
-
-        if (!stroke || !length || !force) {
-            alert("Пожалуйста, заполните все поля");
-            return;
+        if (connType === 'welded') {
+            const val = document.getElementById('welded-select').value.split('|');
+            stroke = val[0];
+            length = val[1];
+        } else {
+            stroke = document.getElementById('stroke-manual').value;
+            length = document.getElementById('length-manual').value;
         }
 
+        const limit = seriesSpecs[series];
+
+        if (!stroke || !length || isNaN(force)) {
+            alert("Заполните все параметры!"); return;
+        }
         if (force < limit.minF || force > limit.maxF) {
-            alert(`Для серии ${series} усилие должно быть от ${limit.minF} до ${limit.maxF}N`);
+            alert(`Ошибка: Усилие для ${series} должно быть от ${limit.minF} до ${limit.maxF}N`);
             return;
         }
 
-        const data = {
+        const result = {
             series: series,
-            connection: connection === 'threaded' ? 'Резьба' : 'Сварка',
+            connection: connType === 'welded' ? 'Сварное (Проушины)' : 'Резьбовое',
             stroke: stroke,
             length: length,
             force: force
         };
 
-        tg.sendData(JSON.stringify(data));
+        tg.sendData(JSON.stringify(result));
     }
 
-    updateSpecs(); // Инициализация при загрузке
+    // Первичная настройка
+    handleSeriesChange();
 </script>
 </body>
 </html>
