@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUSPA Liftline Configurator Ultimate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SUSPA Configurator Mobile Optimized</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; -webkit-tap-highlight-color: transparent; }
         
         .card { 
             background: white; 
@@ -17,111 +17,105 @@
             margin: auto; 
         }
 
-        h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 26px; font-weight: bold; }
-        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 25px; }
+        h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 24px; font-weight: bold; }
+        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 20px; }
 
-        /* Трехколоночная сетка */
+        /* СЕТКА КОНФИГУРАТОРА */
         .config-grid {
             display: grid;
+            /* Определяем области для перестановки */
+            grid-template-areas: 
+                "sideA params sideB"
+                "sideA visual sideB"
+                "sideA results sideB";
             grid-template-columns: 240px 1fr 240px; 
-            gap: 25px;
+            gap: 20px;
             align-items: start;
         }
 
-        label { display: block; margin: 0 0 8px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-bottom: 15px; background: #fff; }
+        /* Назначение областей */
+        .side-a { grid-area: sideA; }
+        .side-b { grid-area: sideB; }
+        .center-params { grid-area: params; }
+        .center-visual { grid-area: visual; }
+        .center-results { grid-area: results; }
 
-        /* Боковые блоки наконечников */
+        /* Стили элементов */
+        label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
+
         .tip-box {
             border: 1px solid #e0e0e0;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
             background: #fafafa;
-            min-height: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.3s ease;
         }
-        .tip-box.disabled { opacity: 0.4; pointer-events: none; background: #f0f0f0; }
-        .tip-title { font-weight: bold; display: block; margin-bottom: 10px; font-size: 14px; color: #000; }
-        
-        .tip-img { 
-            width: 140px; 
-            height: 100px; 
-            object-fit: contain; 
-            margin-bottom: 5px; 
-            background: #fff; 
-            border-radius: 6px; 
-            padding: 5px; 
-            border: 1px solid #eee; 
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .tip-img:hover { transform: scale(1.05); border-color: #f39c12; }
-        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .tip-box.disabled { opacity: 0.4; pointer-events: none; }
+        .tip-img { width: 140px; height: 100px; object-fit: contain; margin-bottom: 5px; background: #fff; border-radius: 6px; border: 1px solid #eee; cursor: pointer; }
+        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 10px; }
 
-        /* Центральная часть */
-        .center-column { display: flex; flex-direction: column; }
+        /* Параметры в ряд на ПК */
         .params-row { 
             display: grid; 
-            grid-template-columns: 1.5fr 1fr 1fr 130px; 
+            grid-template-columns: 1fr 1fr 1fr 120px; 
             gap: 15px; 
             background: #fdfdfd;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #efefef;
         }
 
-        /* Область чертежа */
         .visual-area {
             text-align: center;
-            padding: 20px;
-            min-height: 250px;
-            margin: 15px 0;
+            padding: 15px;
             background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid #f0f0f0;
         }
-        .spring-drawing { max-width: 100%; max-height: 220px; height: auto; }
+        .spring-drawing { max-width: 100%; height: auto; max-height: 180px; }
 
-        /* Результаты */
-        .result-panel { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: end; margin-top: 10px; }
-        .order-code-value { background: #2c3e50; color: #f39c12; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 15px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
-        
-        /* Стили валидации силы */
+        .result-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .order-code-value { background: #2c3e50; color: #f39c12; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 16px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
+
         input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
-        .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -10px; display: block; text-align: center; font-weight: bold; }
+        .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -5px; display: block; text-align: center; font-weight: bold; }
 
-        /* Кнопки внизу */
-        .footer-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-order { background: #f39c12; color: #000; border: none; padding: 14px 60px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-transform: uppercase; }
-        .btn-order:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
+        .footer-buttons { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; gap: 10px; }
+        .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 14px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; }
+        .btn-order { background: #f39c12; color: #000; border: none; padding: 14px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; flex: 2; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-order:disabled { background: #ccc; opacity: 0.6; }
 
-        /* МОДАЛЬНОЕ ОКНО (ПОП-АП) */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 90%; max-height: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .detail-img { max-width: 100%; max-height: 60vh; margin-bottom: 20px; border: 1px solid #eee; border-radius: 8px; }
-        .modal-btns { display: flex; gap: 15px; justify-content: center; }
-        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* МОДАЛКА */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 95%; text-align: center; }
+        .detail-img { max-width: 100%; max-height: 70vh; margin-bottom: 15px; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; }
+        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; }
 
-        .hidden { display: none; }
-
-        @media (max-width: 1000px) {
-            .config-grid { grid-template-columns: 1fr; }
-            .params-row { grid-template-columns: 1fr 1fr; }
+        /* ПОРЯДОК ДЛЯ МОБИЛЬНЫХ (Адаптация) */
+        @media (max-width: 800px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "params"
+                    "visual"
+                    "sideA"
+                    "sideB"
+                    "results";
+                gap: 10px;
+            }
+            .params-row { grid-template-columns: 1fr; padding: 10px; }
+            .tip-box { min-height: auto; padding: 10px; }
+            .tip-img { width: 120px; height: 80px; }
+            h2 { font-size: 20px; }
         }
     </style>
 </head>
@@ -133,23 +127,11 @@
     
     <div class="config-grid">
         
-        <!-- СТОРОНА А -->
-        <div class="side-column">
-            <label>Наконечник А (Трубка):</label>
-            <div class="tip-box" id="box-a">
-                <span class="tip-title">СТОРОНА А</span>
-                <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Fitting A">
-                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
-                <div id="hint-a" style="font-size: 11px; color: #888;">Крепление цилиндра</div>
-            </div>
-        </div>
-
-        <!-- ЦЕНТР -->
-        <div class="center-column">
+        <!-- ПАРАМЕТРЫ (ВЕРХ) -->
+        <div class="center-params">
             <div class="params-row">
                 <div>
-                    <label>Серия:</label>
+                    <label>1. Серия:</label>
                     <select id="series" onchange="updateUI()">
                         <option value="16-1">16-1 (Ø15/6)</option>
                         <option value="16-2">16-2 (Ø18.5/8)</option>
@@ -158,48 +140,58 @@
                     </select>
                 </div>
                 <div>
-                    <label>Длина и Ход:</label>
+                    <label>2. Длина и Ход:</label>
                     <select id="dimensions-select" onchange="calculateTotal()"></select>
                 </div>
                 <div>
-                    <label>Соединение:</label>
+                    <label>3. Соединение:</label>
                     <select id="connection" onchange="updateUI()">
                         <option value="threaded">Резьбовое</option>
                         <option id="welded-opt" value="welded">Сварное</option>
                     </select>
                 </div>
                 <div>
-                    <label>Усилие (Н):</label>
+                    <label>4. Усилие (Н):</label>
                     <input type="number" id="force" oninput="validateForce()" placeholder="250">
                     <span id="force-limits" class="limit-hint">min --H - max --H</span>
                 </div>
             </div>
+        </div>
 
+        <!-- КАРТИНКА ПРУЖИНЫ -->
+        <div class="center-visual">
             <div class="visual-area">
                 <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing">
             </div>
+        </div>
 
-            <div class="result-panel">
-                <div>
-                    <div id="calc-result" style="font-size: 18px; font-weight: bold; color: #2d3748;">L1: -- мм</div>
-                    <div id="spec-info" style="font-size: 12px; color: #718096; margin-top: 5px;"></div>
-                </div>
-                <div>
-                    <label style="text-align: center;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
-                    <div id="order-code" class="order-code-value">---</div>
-                </div>
+        <!-- СТОРОНА А -->
+        <div class="side-a">
+            <label>Сторона А (Трубка):</label>
+            <div class="tip-box" id="box-a">
+                <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
+                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')">
+                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
         <!-- СТОРОНА B -->
-        <div class="side-column">
-            <label>Наконечник B (Шток):</label>
+        <div class="side-b">
+            <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-b">
-                <span class="tip-title">СТОРОНА B</span>
                 <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Fitting B">
+                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')">
                 <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
-                <div id="hint-b" style="font-size: 11px; color: #888;">Крепление штока</div>
+            </div>
+        </div>
+
+        <!-- РЕЗУЛЬТАТЫ (НИЗ) -->
+        <div class="center-results">
+            <div class="result-panel">
+                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
+                <div id="spec-info" style="font-size: 12px; color: #718096; text-align: center;"></div>
+                <label style="text-align: center; margin-top: 10px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
+                <div id="order-code" class="order-code-value">---</div>
             </div>
         </div>
 
@@ -211,14 +203,14 @@
     </div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ -->
+<!-- МОДАЛКА ЧЕРТЕЖЕЙ -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
-        <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
+        <h3 id="modal-title" style="margin-top: 0;">Технический чертеж</h3>
         <img id="modal-img" src="" class="detail-img">
         <div class="modal-btns">
-            <button class="btn-confirm" onclick="closeModal()">ПОДТВЕРДИТЬ ВЫБОР</button>
-            <button class="btn-back" onclick="closeModal()">НАЗАД К ВЫБОРУ</button>
+            <button class="btn-confirm" onclick="closeModal()">ПОДТВЕРДИТЬ</button>
+            <button class="btn-back" onclick="closeModal()">НАЗАД</button>
         </div>
     </div>
 </div>
@@ -227,7 +219,6 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // ПОЛНЫЕ ТАБЛИЦЫ РАЗМЕРОВ
     const springCatalog = {
         threaded: {
             "16-1": [{l:77.5, s:20, t:53.5, r:24}, {l:107, s:35, t:67, r:40}, {l:117.5, s:40, t:72.5, r:45}, {l:156.5, s:60, t:91.5, r:65}, {l:197, s:80, t:113, r:84}, {l:207, s:85, t:117, r:90}, {l:235, s:100, t:131, r:104}, {l:278, s:120, t:154, r:124}, {l:285, s:120, t:161, r:124}, {l:316, s:135, t:168, r:148}, {l:337.5, s:150, t:183.5, r:154}],
@@ -243,7 +234,6 @@
         }
     };
 
-    // ПОЛНЫЙ СПИСОК НАКОНЕЧНИКОВ С ПУТЯМИ К ЧЕРТЕЖАМ
     const attachments = [
         { id: "none", name: "Без наконечника", dist: 0, series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png", detail: "img/tips/none.png" },
         { id: "A246-B246", name: "Шарнир Пластик M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A246-B246.png", detail: "img/details/A26-detail.png" },
@@ -282,13 +272,11 @@
         const weldedOpt = document.getElementById('welded-opt');
         let conn = document.getElementById('connection').value;
 
-        // Блокировка сварки для 16-6
         if (series === "16-6") {
             weldedOpt.disabled = true;
             if (conn === "welded") { document.getElementById('connection').value = "threaded"; conn = "threaded"; }
         } else { weldedOpt.disabled = false; }
 
-        // Заполнение размеров
         const dimSel = document.getElementById('dimensions-select');
         dimSel.innerHTML = "";
         const data = springCatalog[conn][series];
@@ -296,7 +284,6 @@
             dimSel.add(new Option(`L: ${p.l} мм / Ход: ${p.s} мм`, idx));
         });
 
-        // Блокировка/Разблокировка панелей наконечников
         const boxA = document.getElementById('box-a');
         const boxB = document.getElementById('box-b');
         const selA = document.getElementById('attach-a');
@@ -306,19 +293,14 @@
             boxA.classList.add('disabled');
             boxB.classList.add('disabled');
             selA.disabled = true; selB.disabled = true;
-            document.getElementById('hint-a').innerText = "Наконечники приварены";
-            document.getElementById('hint-b').innerText = "Наконечники приварены";
         } else {
             boxA.classList.remove('disabled');
             boxB.classList.remove('disabled');
             selA.disabled = false; selB.disabled = false;
-            document.getElementById('hint-a').innerText = "Крепление цилиндра";
-            document.getElementById('hint-b').innerText = "Крепление штока";
             fillAttach('attach-a', series);
             fillAttach('attach-b', series);
         }
 
-        // Обновление лимитов силы
         const lim = seriesLimits[series];
         const forceInp = document.getElementById('force');
         forceInp.min = lim.min;
@@ -359,21 +341,16 @@
     function openDetail(side) {
         const conn = document.getElementById('connection').value;
         if (conn === 'welded') return;
-
         const selectId = side === 'a' ? 'attach-a' : 'attach-b';
         const val = document.getElementById(selectId).value.split('|')[0];
         const tip = attachments.find(a => a.id === val);
-
         if (tip && tip.id !== 'none') {
-            document.getElementById('modal-title').innerText = "Чертеж: " + tip.name;
             document.getElementById('modal-img').src = tip.detail;
             document.getElementById('detailModal').style.display = 'flex';
         }
     }
 
-    function closeModal() {
-        document.getElementById('detailModal').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
 
     function validateForce() {
         const series = document.getElementById('series').value;
@@ -381,7 +358,6 @@
         const forceInp = document.getElementById('force');
         const orderBtn = document.getElementById('order-btn');
         const val = parseInt(forceInp.value);
-
         if (val < lim.min || val > lim.max || isNaN(val)) {
             forceInp.classList.add('error');
             orderBtn.disabled = true;
@@ -398,7 +374,6 @@
         const dimIdx = document.getElementById('dimensions-select').value;
         const p = springCatalog[conn][series][dimIdx];
         const force = document.getElementById('force').value || "???";
-
         if (!p) return;
 
         let code = "";
@@ -415,7 +390,6 @@
             code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
             l1 = p.l;
         }
-
         document.getElementById('order-code').innerText = code;
         document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
         document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
