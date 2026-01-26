@@ -3,129 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SUSPA Liftline Configurator Pro</title>
+    <title>SUSPA Configurator Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f4f7f9; padding: 10px; color: #333; margin: 0; }
-        
-        .card { 
-            background: white; 
-            padding: 22px; 
-            border-radius: 18px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
-            max-width: 1100px; 
-            margin: auto; 
-        }
+        /* Базовые стили и сброс */
+        body { font-family: -apple-system, system-ui, Helvetica, Arial, sans-serif; background: #f4f7f9; padding: 10px; color: #333; margin: 0; -webkit-font-smoothing: antialiased; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 1100px; margin: auto; box-sizing: border-box; }
+        h2 { color: #000; text-align: left; margin: 0 0 5px 0; font-size: 22px; font-weight: bold; }
+        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 15px; }
 
-        h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 26px; font-weight: bold; }
-        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 25px; }
+        /* Контейнер конфигуратора */
+        .config-container { display: flex; flex-direction: column; gap: 15px; }
 
-        /* СЕТКА КОНФИГУРАТОРА (ПК ВЕРСИЯ) */
-        .config-grid {
-            display: grid;
-            grid-template-areas: 
-                "sideA params sideB"
-                "sideA visual sideB"
-                "sideA results sideB";
-            grid-template-columns: 260px 1fr 260px; 
-            gap: 25px;
-            align-items: start;
-        }
+        /* Группа параметров */
+        .params-group { display: flex; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 12px; border-radius: 10px; border: 1px solid #efefef; }
+        .param-item { flex: 1; min-width: 140px; }
 
-        /* Назначение областей */
-        .side-a { grid-area: sideA; }
-        .side-b { grid-area: sideB; }
-        .center-params { grid-area: params; }
-        .center-visual { grid-area: visual; }
-        .center-results { grid-area: results; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: #666; text-transform: uppercase; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #d1d8e0; border-radius: 8px; font-size: 14px; background: #fff; box-sizing: border-box; -webkit-appearance: none; }
 
-        label { display: block; margin: 15px 0 6px; font-weight: bold; font-size: 12px; color: #666; text-transform: uppercase; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; }
+        /* Блок визуализации пружины */
+        .visual-area { text-align: center; padding: 15px; background: #fff; border-radius: 10px; border: 1px solid #f0f0f0; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+        .spring-drawing { max-width: 100%; height: auto; max-height: 160px; }
 
-        .tip-box {
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            background: #fafafa;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .tip-box.disabled { opacity: 0.4; pointer-events: none; }
-        .tip-img { 
-            width: 150px; 
-            height: 110px; 
-            object-fit: contain; 
-            margin-bottom: 5px; 
-            background: #fff; 
-            border-radius: 8px; 
-            padding: 5px; 
-            border: 1px solid #eee; 
-            cursor: pointer;
-        }
-        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 10px; text-align: center; }
+        /* Блоки наконечников */
+        .fittings-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .side-block { flex: 1; min-width: 280px; border: 1px solid #e0e0e0; padding: 12px; border-radius: 10px; background: #fafafa; text-align: center; box-sizing: border-box; }
+        .side-block.disabled { opacity: 0.4; pointer-events: none; }
+        .tip-img { width: 120px; height: 90px; object-fit: contain; margin: 5px auto; background: #fff; border-radius: 6px; padding: 5px; border: 1px solid #eee; display: block; }
+        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 5px; cursor: pointer; text-decoration: underline; }
 
-        .params-row { 
-            display: grid; 
-            grid-template-columns: 1.5fr 1fr 1fr 130px; 
-            gap: 15px; 
-            background: #fdfdfd;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #efefef;
-        }
+        /* Результаты */
+        .results-block { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .l1-display { font-size: 18px; font-weight: bold; text-align: center; color: #2d3748; }
+        .spec-info { font-size: 12px; color: #718096; text-align: center; }
+        .order-code-value { background: #2c3e50; color: #f39c12; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 15px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
 
-        .visual-area {
-            text-align: center;
-            padding: 20px;
-            min-height: 220px;
-            margin: 15px 0;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            border: 1px solid #f0f0f0;
-        }
-        .spring-drawing { max-width: 100%; height: auto; max-height: 180px; }
-
-        .result-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .order-code-value { background: #2c3e50; color: #f39c12; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 16px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
-
+        /* Ошибки ввода */
         input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
-        .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -5px; display: block; text-align: center; font-weight: bold; }
+        .limit-hint { font-size: 10px; color: #7f8c8d; font-weight: bold; margin-top: 2px; display: block; }
 
-        .footer-buttons { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; gap: 10px; }
-        .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 14px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; flex: 1; }
-        .btn-order { background: #f39c12; color: #000; border: none; padding: 14px 50px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 2; text-transform: uppercase; }
+        /* Кнопки */
+        .footer-buttons { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; gap: 10px; }
+        .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 12px; border-radius: 8px; font-weight: bold; flex: 1; cursor: pointer; font-size: 13px; }
+        .btn-order { background: #f39c12; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; flex: 2; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        .btn-order:disabled { background: #ccc; opacity: 0.6; }
 
-        /* МОДАЛКА */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 90%; text-align: center; }
-        .detail-img { max-width: 100%; max-height: 65vh; margin-bottom: 20px; }
-        .modal-btns { display: flex; gap: 15px; justify-content: center; }
-        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; }
-        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; }
+        /* Модалка (чертежи) */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 15px; border-radius: 12px; max-width: 95%; text-align: center; }
+        .detail-img { max-width: 100%; max-height: 70vh; display: block; margin: 0 auto 15px; }
+        .btn-modal { padding: 10px 25px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
 
-        /* АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ (ВАШ ПОРЯДОК) */
-        @media (max-width: 850px) {
-            .config-grid {
-                grid-template-columns: 1fr;
-                grid-template-areas: 
-                    "params"
-                    "visual"
-                    "sideA"
-                    "sideB"
-                    "results";
-                gap: 15px;
-            }
-            .params-row { grid-template-columns: 1fr; padding: 10px; }
-            .tip-box { min-height: auto; padding: 15px; }
-            .tip-img { width: 140px; height: 90px; }
-            h2 { font-size: 22px; }
-            .footer-buttons { flex-direction: column; }
+        /* ПК адаптация */
+        @media (min-width: 851px) {
+            .config-container { display: grid; grid-template-columns: 260px 1fr 260px; grid-template-areas: "sideA params sideB" "sideA visual sideB" "sideA results sideB"; }
+            .side-a { grid-area: sideA; }
+            .side-b { grid-area: sideB; }
+            .params-group { grid-area: params; }
+            .visual-area { grid-area: visual; }
+            .results-block { grid-area: results; }
         }
     </style>
 </head>
@@ -135,98 +72,88 @@
     <h2>Конфигуратор</h2>
     <div class="header-line"></div>
     
-    <div class="config-grid">
+    <div class="config-container">
         
-        <!-- 1. ПАРАМЕТРЫ -->
-        <div class="center-params">
-            <div class="params-row">
-                <div>
-                    <label>1. Серия:</label>
-                    <select id="series" onchange="updateUI()">
-                        <option value="16-1">16-1 (Ø15/6)</option>
-                        <option value="16-2">16-2 (Ø18.5/8)</option>
-                        <option value="16-4">16-4 (Ø22/10)</option>
-                        <option value="16-6">16-6 (Ø28/14)</option>
-                    </select>
-                </div>
-                <div>
-                    <label>2. Длина и Ход:</label>
-                    <select id="dimensions-select" onchange="calculateTotal()"></select>
-                </div>
-                <div>
-                    <label>3. Соединение:</label>
-                    <select id="connection" onchange="updateUI()">
-                        <option value="threaded">Резьбовое</option>
-                        <option id="welded-opt" value="welded">Сварное</option>
-                    </select>
-                </div>
-                <div>
-                    <label>4. Усилие (Н):</label>
-                    <input type="number" id="force" oninput="validateForce()" placeholder="250">
-                    <span id="force-limits" class="limit-hint">min --H - max --H</span>
-                </div>
+        <!-- 1. ПАРАМЕТРЫ (ВЕРХ) -->
+        <div class="params-group">
+            <div class="param-item">
+                <label>1. Серия:</label>
+                <select id="series" onchange="updateUI()">
+                    <option value="16-1">16-1 (Ø15/6)</option>
+                    <option value="16-2">16-2 (Ø18.5/8)</option>
+                    <option value="16-4">16-4 (Ø22/10)</option>
+                    <option value="16-6">16-6 (Ø28/14)</option>
+                </select>
+            </div>
+            <div class="param-item">
+                <label>2. Длина и Ход:</label>
+                <select id="dimensions-select" onchange="calculateTotal()"></select>
+            </div>
+            <div class="param-item">
+                <label>3. Соединение:</label>
+                <select id="connection" onchange="updateUI()">
+                    <option value="threaded">Резьбовое</option>
+                    <option id="welded-opt" value="welded">Сварное</option>
+                </select>
+            </div>
+            <div class="param-item">
+                <label>4. Усилие (Н):</label>
+                <input type="number" id="force" oninput="validateForce()" placeholder="250" inputmode="numeric">
+                <span id="force-limits" class="limit-hint">min --H - max --H</span>
             </div>
         </div>
 
-        <!-- 2. КАРТИНКА ПРУЖИНЫ -->
-        <div class="area-visual">
-            <div class="visual-area">
-                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing" alt="Чертеж пружины">
-            </div>
+        <!-- 2. ВИЗУАЛИЗАЦИЯ (ЧЕРТЕЖ) -->
+        <div class="visual-area">
+            <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing">
         </div>
 
         <!-- 3. СТОРОНА А -->
-        <div class="side-a">
+        <div class="side-a side-block" id="box-a">
             <label>Сторона А (Трубка):</label>
-            <div class="tip-box" id="box-a">
-                <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Fitting A">
-                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
-            </div>
+            <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
+            <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')">
+            <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
         </div>
 
         <!-- 4. СТОРОНА B -->
-        <div class="side-b">
+        <div class="side-b side-block" id="box-b">
             <label>Сторона B (Шток):</label>
-            <div class="tip-box" id="box-b">
-                <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Fitting B">
-                <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
-            </div>
+            <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
+            <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')">
+            <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
         </div>
 
         <!-- 5. РЕЗУЛЬТАТЫ -->
-        <div class="center-results">
-            <div class="result-panel">
-                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
-                <div id="spec-info" style="font-size: 12px; color: #718096; text-align: center; margin-top: 5px;"></div>
-                <label style="text-align: center; margin-top: 10px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
-                <div id="order-code" class="order-code-value">---</div>
-            </div>
+        <div class="results-block">
+            <div id="calc-result" class="l1-display">L1: -- мм</div>
+            <div id="spec-info" class="spec-info"></div>
+            <label style="text-align: center; margin-top: 5px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
+            <div id="order-code" class="order-code-value">---</div>
         </div>
 
     </div>
 
     <div class="footer-buttons">
-        <button class="btn-print" onclick="window.print()">РАСПЕЧАТАТЬ</button>
+        <button class="btn-print" onclick="window.print()">Распечатать</button>
         <button id="order-btn" class="btn-order" onclick="sendOrder()">ЗАКАЗАТЬ</button>
     </div>
 </div>
 
+<!-- МОДАЛКА -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
-        <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
+        <h3 id="modal-title" style="margin: 0 0 15px 0; font-size: 16px;">Технический чертеж</h3>
         <img id="modal-img" src="" class="detail-img">
-        <div class="modal-btns">
-            <button class="btn-confirm" onclick="closeModal()">ПОДТВЕРДИТЬ</button>
-            <button class="btn-back" onclick="closeModal()">НАЗАД</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-modal" style="background:#27ae60; color:#fff; flex:1;" onclick="closeModal()">ПОДТВЕРДИТЬ</button>
+            <button class="btn-modal" style="background:#e74c3c; color:#fff; flex:1;" onclick="closeModal()">НАЗАД</button>
         </div>
     </div>
 </div>
 
 <script>
-    let tg = window.Telegram.WebApp;
-    tg.expand();
+    const tg = window.Telegram.WebApp;
 
     const springCatalog = {
         threaded: {
@@ -269,6 +196,7 @@
         { id: "A412-B412", name: "Проушина пластик", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A412-B412.png", detail: "img/details/A26-detail.png" },
         { id: "A21-B21", name: "Вильчатая головка M8", dist: 32, series: ["16-4", "16-6"], img: "img/tips/A21-B21.png", detail: "img/details/A26-detail.png" }
     ];
+
     const seriesLimits = {
         "16-1": { min: 50, max: 400, rod: 6, tube: 15, thread: "M6" },
         "16-2": { min: 80, max: 750, rod: 8, tube: 18.5, thread: "M6" },
@@ -410,7 +338,12 @@
         tg.close();
     }
 
-    updateUI();
+    // ИНИЦИАЛИЗАЦИЯ ДЛЯ ТЕЛЕГРАМА
+    window.addEventListener('DOMContentLoaded', () => {
+        tg.ready();
+        tg.expand();
+        updateUI();
+    });
 </script>
 </body>
 </html>
