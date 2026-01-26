@@ -3,186 +3,431 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUSPA Configurator</title>
+    <title>SUSPA Liftline Configurator Ultimate</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 15px; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #f39c12; margin-top: 0; text-align: center; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 0.9em; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .info { background: #fffde7; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.85em; border-left: 4px solid #fbc02d; line-height: 1.4; }
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; }
+        
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08); 
+            max-width: 1100px; 
+            margin: auto; 
+        }
+
+        h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 26px; font-weight: bold; }
+        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 25px; }
+
+        /* Трехколоночная сетка */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr 240px; 
+            gap: 25px;
+            align-items: start;
+        }
+
+        label { display: block; margin: 0 0 8px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-bottom: 15px; background: #fff; }
+
+        /* Боковые блоки наконечников */
+        .tip-box {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            background: #fafafa;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .tip-box.disabled { opacity: 0.4; pointer-events: none; background: #f0f0f0; }
+        .tip-title { font-weight: bold; display: block; margin-bottom: 10px; font-size: 14px; color: #000; }
+        
+        .tip-img { 
+            width: 140px; 
+            height: 100px; 
+            object-fit: contain; 
+            margin-bottom: 5px; 
+            background: #fff; 
+            border-radius: 6px; 
+            padding: 5px; 
+            border: 1px solid #eee; 
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .tip-img:hover { transform: scale(1.05); border-color: #f39c12; }
+        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+
+        /* Центральная часть */
+        .center-column { display: flex; flex-direction: column; }
+        .params-row { 
+            display: grid; 
+            grid-template-columns: 1.5fr 1fr 1fr 130px; 
+            gap: 15px; 
+            background: #fdfdfd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #efefef;
+        }
+
+        /* Область чертежа */
+        .visual-area {
+            text-align: center;
+            padding: 20px;
+            min-height: 250px;
+            margin: 15px 0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+        }
+        .spring-drawing { max-width: 100%; max-height: 220px; height: auto; }
+
+        /* Результаты */
+        .result-panel { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: end; margin-top: 10px; }
+        .order-code-value { background: #2c3e50; color: #f39c12; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 15px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
+        
+        /* Стили валидации силы */
+        input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
+        .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -10px; display: block; text-align: center; font-weight: bold; }
+
+        /* Кнопки внизу */
+        .footer-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-order { background: #f39c12; color: #000; border: none; padding: 14px 60px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-transform: uppercase; }
+        .btn-order:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; opacity: 0.6; }
+
+        /* МОДАЛЬНОЕ ОКНО (ПОП-АП) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 90%; max-height: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .detail-img { max-width: 100%; max-height: 60vh; margin-bottom: 20px; border: 1px solid #eee; border-radius: 8px; }
+        .modal-btns { display: flex; gap: 15px; justify-content: center; }
+        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 35px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
         .hidden { display: none; }
-        #main-button { background: #f39c12; color: white; border: none; width: 100%; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-top: 25px; cursor: pointer; transition: 0.3s; }
-        #main-button:active { transform: scale(0.98); background: #e67e22; }
+
+        @media (max-width: 1000px) {
+            .config-grid { grid-template-columns: 1fr; }
+            .params-row { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>SUSPA Liftline</h2>
+    <h2>Конфигуратор</h2>
+    <div class="header-line"></div>
     
-    <label>1. Выберите серию:</label>
-    <select id="series" onchange="handleSeriesChange()">
-        <option value="16-1">Серия 16-1 (Ø15/6)</option>
-        <option value="16-2">Серия 16-2 (Ø18.5/8)</option>
-        <option value="16-4">Серия 16-4 (Ø22/10)</option>
-        <option value="16-6">Серия 16-6 (Ø28/14)</option>
-    </select>
+    <div class="config-grid">
+        
+        <!-- СТОРОНА А -->
+        <div class="side-column">
+            <label>Наконечник А (Трубка):</label>
+            <div class="tip-box" id="box-a">
+                <span class="tip-title">СТОРОНА А</span>
+                <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
+                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Fitting A">
+                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
+                <div id="hint-a" style="font-size: 11px; color: #888;">Крепление цилиндра</div>
+            </div>
+        </div>
 
-    <label>2. Тип соединения:</label>
-    <select id="connection" onchange="handleConnectionTypeChange()">
-        <option value="threaded">Резьба (M6/M8/M10)</option>
-        <option id="opt-welded" value="welded">Сварное (Проушины)</option>
-    </select>
+        <!-- ЦЕНТР -->
+        <div class="center-column">
+            <div class="params-row">
+                <div>
+                    <label>Серия:</label>
+                    <select id="series" onchange="updateUI()">
+                        <option value="16-1">16-1 (Ø15/6)</option>
+                        <option value="16-2">16-2 (Ø18.5/8)</option>
+                        <option value="16-4">16-4 (Ø22/10)</option>
+                        <option value="16-6">16-6 (Ø28/14)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Длина и Ход:</label>
+                    <select id="dimensions-select" onchange="calculateTotal()"></select>
+                </div>
+                <div>
+                    <label>Соединение:</label>
+                    <select id="connection" onchange="updateUI()">
+                        <option value="threaded">Резьбовое</option>
+                        <option id="welded-opt" value="welded">Сварное</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Усилие (Н):</label>
+                    <input type="number" id="force" oninput="validateForce()" placeholder="250">
+                    <span id="force-limits" class="limit-hint">min --H - max --H</span>
+                </div>
+            </div>
 
-    <!-- Блок для ручного ввода (если резьба) -->
-    <div id="manual-inputs">
-        <label>Ход штока (мм):</label>
-        <input type="number" id="stroke-manual" placeholder="Напр: 100">
-        <label>Длина L (без резьбы, мм):</label>
-        <input type="number" id="length-manual" placeholder="Напр: 250">
+            <div class="visual-area">
+                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing">
+            </div>
+
+            <div class="result-panel">
+                <div>
+                    <div id="calc-result" style="font-size: 18px; font-weight: bold; color: #2d3748;">L1: -- мм</div>
+                    <div id="spec-info" style="font-size: 12px; color: #718096; margin-top: 5px;"></div>
+                </div>
+                <div>
+                    <label style="text-align: center;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
+                    <div id="order-code" class="order-code-value">---</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТОРОНА B -->
+        <div class="side-column">
+            <label>Наконечник B (Шток):</label>
+            <div class="tip-box" id="box-b">
+                <span class="tip-title">СТОРОНА B</span>
+                <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
+                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Fitting B">
+                <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
+                <div id="hint-b" style="font-size: 11px; color: #888;">Крепление штока</div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Блок для выбора из таблицы (если сварное) -->
-    <div id="welded-inputs" class="hidden">
-        <label>Выберите параметры (Ход / Длина L):</label>
-        <select id="welded-select"></select>
+    <div class="footer-buttons">
+        <button class="btn-print" onclick="window.print()">РАСПЕЧАТАТЬ</button>
+        <button id="order-btn" class="btn-order" onclick="sendOrder()">ЗАКАЗАТЬ</button>
     </div>
+</div>
 
-    <label>3. Требуемое усилие (N):</label>
-    <input type="number" id="force" placeholder="Введите значение">
-
-    <div class="info" id="spec-info"></div>
-
-    <button id="main-button" onclick="sendData()">ОТПРАВИТЬ ЗАКАЗ</button>
+<!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
+        <img id="modal-img" src="" class="detail-img">
+        <div class="modal-btns">
+            <button class="btn-confirm" onclick="closeModal()">ПОДТВЕРДИТЬ ВЫБОР</button>
+            <button class="btn-back" onclick="closeModal()">НАЗАД К ВЫБОРУ</button>
+        </div>
+    </div>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Данные из таблиц каталога (Сварные соединения)
-    const weldedCatalog = {
-        "16-1": [
-            {stroke: 20, l: 106}, {stroke: 40, l: 146}, {stroke: 45, l: 160},
-            {stroke: 55, l: 179}, {stroke: 60, l: 186}, {stroke: 80, l: 224},
-            {stroke: 100, l: 264}, {stroke: 110, l: 306}, {stroke: 120, l: 305.5}, {stroke: 150, l: 366}
-        ],
-        "16-2": [
-            {stroke: 60, l: 206.5}, {stroke: 80, l: 246.5}, {stroke: 90, l: 256.5},
-            {stroke: 100, l: 286.5}, {stroke: 120, l: 316.5}, {stroke: 120, l: 326.5},
-            {stroke: 133, l: 354.5}, {stroke: 140, l: 364.5}, {stroke: 160, l: 407.5},
-            {stroke: 178, l: 444}, {stroke: 200, l: 485.5}, {stroke: 220, l: 525.5}, {stroke: 250, l: 586.5}
-        ],
-        "16-4": [
-            {stroke: 95, l: 283}, {stroke: 145, l: 383}, {stroke: 195, l: 483},
-            {stroke: 245, l: 586}, {stroke: 295, l: 683}, {stroke: 345, l: 783},
-            {stroke: 395, l: 883}, {stroke: 445, l: 983}, {stroke: 495, l: 1083}
-        ]
-    };
-
-    const seriesSpecs = {
-        "16-1": { minF: 50, maxF: 400, rod: 6, tube: 15 },
-        "16-2": { minF: 80, maxF: 750, rod: 8, tube: 18.5 },
-        "16-4": { minF: 100, maxF: 1200, rod: 10, tube: 22 },
-        "16-6": { minF: 200, maxF: 2000, rod: 14, tube: 28 }
-    };
-
-    function handleSeriesChange() {
-        const series = document.getElementById('series').value;
-        const weldedOpt = document.getElementById('opt-welded');
-        const connSelect = document.getElementById('connection');
-
-        // Логика для 16-6: Сварных не бывает
-        if (series === "16-6") {
-            weldedOpt.disabled = true;
-            connSelect.value = "threaded";
-            alert("Для серии 16-6 доступны только резьбовые соединения.");
-        } else {
-            weldedOpt.disabled = false;
+    // ПОЛНЫЕ ТАБЛИЦЫ РАЗМЕРОВ
+    const springCatalog = {
+        threaded: {
+            "16-1": [{l:77.5, s:20, t:53.5, r:24}, {l:107, s:35, t:67, r:40}, {l:117.5, s:40, t:72.5, r:45}, {l:156.5, s:60, t:91.5, r:65}, {l:197, s:80, t:113, r:84}, {l:207, s:85, t:117, r:90}, {l:235, s:100, t:131, r:104}, {l:278, s:120, t:154, r:124}, {l:285, s:120, t:161, r:124}, {l:316, s:135, t:168, r:148}, {l:337.5, s:150, t:183.5, r:154}],
+            "16-2": [{l:128, s:40, t:78, r:50}, {l:168, s:57, t:109, r:59}, {l:206, s:80, t:121, r:85}, {l:218, s:85, t:128, r:90}, {l:248, s:100, t:138, r:110}, {l:268, s:105, t:158, r:110}, {l:288, s:120, t:163, r:125}, {l:328, s:140, t:178, r:150}, {l:367, s:160, t:203, r:164}, {l:408, s:180, t:223, r:185}, {l:453, s:195, t:253, r:200}, {l:447.5, s:200, t:240, r:207.5}, {l:489, s:220, t:264, r:225}, {l:547.5, s:250, t:294, r:253.5}],
+            "16-4": [{l:248, s:98, t:148, r:100}, {l:288, s:120, t:163, r:125}, {l:348, s:148, t:198, r:150}, {l:367, s:150, t:198, r:169}, {l:406, s:168, t:236, r:170}, {l:448, s:198, t:248, r:200}, {l:548, s:248, t:298, r:250}, {l:648, s:295, t:348, r:300}, {l:748, s:345, t:398, r:350}, {l:768, s:345, t:418, r:350}, {l:848, s:395, t:448, r:400}, {l:948, s:445, t:498, r:450}, {l:1048, s:495, t:548, r:500}],
+            "16-6": [{l:218, s:70, t:118, r:100}, {l:268, s:98, t:168, r:100}, {l:368, s:145, t:218, r:150}, {l:468, s:198, t:268, r:200}, {l:568, s:248, t:318, r:250}, {l:668, s:298, t:368, r:300}, {l:768, s:348, t:418, r:350}, {l:874, s:398, t:474, r:400}, {l:963, s:450, t:508, r:455}, {l:1070, s:500, t:565, r:505}]
+        },
+        welded: {
+            "16-1": [{l:106, s:20, t:57, r:26, a:'A17', b:'B17'}, {l:146, s:40, t:78, r:45, a:'A17', b:'B17'}, {l:160, s:45, t:86, r:51, a:'A17', b:'B17'}, {l:179, s:55, t:96, r:60, a:'A17', b:'B17'}, {l:186, s:60, t:96, r:67, a:'A17', b:'B17'}, {l:224, s:80, t:111, r:90, a:'A17', b:'B17'}, {l:264, s:100, t:131, r:110, a:'A17', b:'B17'}, {l:306, s:110, t:168, r:115, a:'A17', b:'B17'}, {l:366, s:150, t:189, r:154, a:'A17', b:'B17'}],
+            "16-2": [{l:206.5, s:60, t:108, r:65, a:'A107', b:'B23'}, {l:246.5, s:80, t:128, r:85, a:'A107', b:'B23'}, {l:256.5, s:90, t:128, r:95, a:'A107', b:'B23'}, {l:286.5, s:100, t:143, r:110, a:'A107', b:'B23'}, {l:316.5, s:120, t:158, r:125, a:'A107', b:'B23'}, {l:326.5, s:120, t:168, r:125, a:'A107', b:'B23'}, {l:354.5, s:133, t:183, r:138, a:'A107', b:'B23'}, {l:364.5, s:140, t:186, r:145, a:'A107', b:'B23'}, {l:407.5, s:160, t:201, r:173, a:'A107', b:'B23'}, {l:444, s:178, t:229.5, r:181, a:'A107', b:'B23'}, {l:485.5, s:200, t:240, r:212, a:'A107', b:'B23'}, {l:525.5, s:220, t:267, r:225, a:'A107', b:'B23'}, {l:586.5, s:250, t:291, r:262, a:'A107', b:'B23'}],
+            "16-4": [{l:283, s:95, t:153, r:100, a:'A23', b:'B23'}, {l:383, s:145, t:203, r:150, a:'A23', b:'B23'}, {l:483, s:195, t:253, r:200, a:'A23', b:'B23'}, {l:586, s:245, t:294, r:262, a:'A23', b:'B23'}, {l:683, s:295, t:353, r:300, a:'A23', b:'B23'}, {l:783, s:345, t:403, r:350, a:'A23', b:'B23'}, {l:883, s:395, t:453, r:400, a:'A23', b:'B23'}, {l:983, s:445, t:503, r:450, a:'A23', b:'B23'}, {l:1083, s:495, t:553, r:500, a:'A23', b:'B23'}],
+            "16-6": [] 
         }
+    };
 
-        updateWeldedList(series);
-        updateUI();
-    }
+    // ПОЛНЫЙ СПИСОК НАКОНЕЧНИКОВ С ПУТЯМИ К ЧЕРТЕЖАМ
+    const attachments = [
+        { id: "none", name: "Без наконечника", dist: 0, series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png", detail: "img/tips/none.png" },
+        { id: "A246-B246", name: "Шарнир Пластик M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A246-B246.png", detail: "img/details/A246-detail.png" },
+        { id: "A201-B201", name: "Шарнир Сталь M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A201-B201.png", detail: "img/details/A201-detail.png" },
+        { id: "A207-B207", name: "Шарнир Сталь M8", dist: 19, series: ["16-4", "16-6"], img: "img/tips/A207-B207.png", detail: "img/details/A207-detail.png" },
+        { id: "A129-B129", name: "Шарнир Хром M8", dist: 30, series: ["16-4", "16-6"], img: "img/tips/A129-B129.png", detail: "img/details/A129-detail.png" },
+        { id: "A199-B199", name: "Шарнир Хром M10", dist: 30, series: ["16-4", "16-6"], img: "img/tips/A199-B199.png", detail: "img/details/A199-detail.png" },
+        { id: "A30-B30", name: "Проушина цинк Ø8.1", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A30-B30.png", detail: "img/details/A30-detail.png" },
+        { id: "A31-B31", name: "Проушина цинк Ø10.1", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A31-B31.png", detail: "img/details/A31-detail.png" },
+        { id: "A104-B104", name: "Проушина цинк Ø12", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A104-B104.png", detail: "img/details/A104-detail.png" },
+        { id: "A220-B220", name: "Проушина цинк Ø6.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A220-B220.png", detail: "img/details/A220-detail.png" },
+        { id: "A221-B221", name: "Проушина цинк Ø8.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A221-B221.png", detail: "img/details/A221-detail.png" },
+        { id: "A222-B222", name: "Проушина цинк Ø10.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A222-B222.png", detail: "img/details/A222-detail.png" },
+        { id: "A26-B26", name: "Проушина цинк Ø12", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
+        { id: "A1-B1", name: "Проушина цинк Ø6.1 (28)", dist: 28, series: ["16-1", "16-2"], img: "img/tips/A1-B1.png", detail: "img/details/A1-detail.png" },
+        { id: "A2-B2", name: "Проушина цинк Ø8.1 (28)", dist: 28, series: ["16-1", "16-2"], img: "img/tips/A2-B2.png", detail: "img/details/A2-detail.png" },
+        { id: "A13-B13", name: "Проушина цинк Ø8.1 (28)", dist: 28, series: ["16-4", "16-6"], img: "img/tips/A13-B13.png", detail: "img/details/A13-detail.png" },
+        { id: "A20-B20", name: "Проушина цинк Ø10.1 (22)", dist: 22, series: ["16-4", "16-6"], img: "img/tips/A20-B20.png", detail: "img/details/A20-detail.png" },
+        { id: "A10-B10", name: "Проушина цинк Ø8.1 (13)", dist: 13, series: ["16-1", "16-2"], img: "img/tips/A10-B10.png", detail: "img/details/A10-detail.png" },
+        { id: "A223-B223", name: "Проушина цинк Ø6.1 (13)", dist: 13, series: ["16-1", "16-2"], img: "img/tips/A223-B223.png", detail: "img/details/A223-detail.png" },
+        { id: "A111-B111", name: "Проушина цинк Ø8.1 (22)", dist: 22, series: ["16-4", "16-6"], img: "img/tips/A111-B111.png", detail: "img/details/A111-detail.png" },
+        { id: "A232-B232", name: "Вильчатая головка M6", dist: 24, series: ["16-1", "16-2"], img: "img/tips/A232-B232.png", detail: "img/details/A232-detail.png" },
+        { id: "A412-B412", name: "Проушина пластик", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A412-B412.png", detail: "img/details/A412-detail.png" },
+        { id: "A21-B21", name: "Вильчатая головка M8", dist: 32, series: ["16-4", "16-6"], img: "img/tips/A21-B21.png", detail: "img/details/A21-detail.png" }
+    ];
 
-    function handleConnectionTypeChange() {
-        updateUI();
-    }
+    const seriesLimits = {
+        "16-1": { min: 50, max: 400, rod: 6, tube: 15, thread: "M6" },
+        "16-2": { min: 80, max: 750, rod: 8, tube: 18.5, thread: "M6" },
+        "16-4": { min: 100, max: 1200, rod: 10, tube: 22, thread: "M8" },
+        "16-6": { min: 200, max: 2000, rod: 14, tube: 28, thread: "M8" }
+    };
 
     function updateUI() {
-        const connType = document.getElementById('connection').value;
         const series = document.getElementById('series').value;
-        const manualBox = document.getElementById('manual-inputs');
-        const weldedBox = document.getElementById('welded-inputs');
+        const weldedOpt = document.getElementById('welded-opt');
+        let conn = document.getElementById('connection').value;
 
-        if (connType === 'welded' && series !== '16-6') {
-            manualBox.classList.add('hidden');
-            weldedBox.classList.remove('hidden');
+        // Блокировка сварки для 16-6
+        if (series === "16-6") {
+            weldedOpt.disabled = true;
+            if (conn === "welded") { document.getElementById('connection').value = "threaded"; conn = "threaded"; }
+        } else { weldedOpt.disabled = false; }
+
+        // Заполнение размеров
+        const dimSel = document.getElementById('dimensions-select');
+        dimSel.innerHTML = "";
+        const data = springCatalog[conn][series];
+        data.forEach((p, idx) => {
+            dimSel.add(new Option(`L: ${p.l} мм / Ход: ${p.s} мм`, idx));
+        });
+
+        // Блокировка/Разблокировка панелей наконечников
+        const boxA = document.getElementById('box-a');
+        const boxB = document.getElementById('box-b');
+        const selA = document.getElementById('attach-a');
+        const selB = document.getElementById('attach-b');
+
+        if (conn === "welded") {
+            boxA.classList.add('disabled');
+            boxB.classList.add('disabled');
+            selA.disabled = true; selB.disabled = true;
+            document.getElementById('hint-a').innerText = "Наконечники приварены";
+            document.getElementById('hint-b').innerText = "Наконечники приварены";
         } else {
-            manualBox.classList.remove('hidden');
-            weldedBox.classList.add('hidden');
+            boxA.classList.remove('disabled');
+            boxB.classList.remove('disabled');
+            selA.disabled = false; selB.disabled = false;
+            document.getElementById('hint-a').innerText = "Крепление цилиндра";
+            document.getElementById('hint-b').innerText = "Крепление штока";
+            fillAttach('attach-a', series);
+            fillAttach('attach-b', series);
         }
 
-        const spec = seriesSpecs[series];
-        document.getElementById('spec-info').innerHTML = 
-            `Серия ${series}: Шток Ø${spec.rod}мм, Трубка Ø${spec.tube}мм.<br>` +
-            `Допустимое усилие: <b>${spec.minF}N — ${spec.maxF}N</b>`;
+        // Обновление лимитов силы
+        const lim = seriesLimits[series];
+        const forceInp = document.getElementById('force');
+        forceInp.min = lim.min;
+        forceInp.max = lim.max;
+        document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
+        
+        updateTipImages();
+        validateForce();
+        calculateTotal();
     }
 
-    function updateWeldedList(series) {
-        const select = document.getElementById('welded-select');
-        select.innerHTML = "";
-        const items = weldedCatalog[series] || [];
-        
-        items.forEach(item => {
-            let opt = document.createElement('option');
-            opt.value = `${item.stroke}|${item.l}`;
-            opt.innerHTML = `Ход: ${item.stroke} мм / L: ${item.l} мм`;
-            select.appendChild(opt);
+    function fillAttach(id, series) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = "";
+        attachments.filter(a => a.series.includes(series)).forEach(a => {
+            sel.add(new Option(`${a.name} (+${a.dist}мм)`, `${a.id || 'none'}|${a.dist}`));
         });
     }
 
-    function sendData() {
+    function updateTipImages() {
         const series = document.getElementById('series').value;
-        const connType = document.getElementById('connection').value;
-        const force = parseInt(document.getElementById('force').value);
-        
-        let stroke, length;
+        const conn = document.getElementById('connection').value;
+        document.getElementById('img-spring').src = `img/springs/${series}-${conn}.png`;
 
-        if (connType === 'welded') {
-            const val = document.getElementById('welded-select').value.split('|');
-            stroke = val[0];
-            length = val[1];
+        if (conn === "threaded") {
+            const valA = document.getElementById('attach-a').value.split('|')[0];
+            const valB = document.getElementById('attach-b').value.split('|')[0];
+            const tipA = attachments.find(a => a.id === valA);
+            const tipB = attachments.find(a => a.id === valB);
+            if (tipA) document.getElementById('img-a').src = tipA.img;
+            if (tipB) document.getElementById('img-b').src = tipB.img;
         } else {
-            stroke = document.getElementById('stroke-manual').value;
-            length = document.getElementById('length-manual').value;
+            document.getElementById('img-a').src = "img/tips/welded-eye.png";
+            document.getElementById('img-b').src = "img/tips/welded-eye.png";
         }
-
-        const limit = seriesSpecs[series];
-
-        if (!stroke || !length || isNaN(force)) {
-            alert("Заполните все параметры!"); return;
-        }
-        if (force < limit.minF || force > limit.maxF) {
-            alert(`Ошибка: Усилие для ${series} должно быть от ${limit.minF} до ${limit.maxF}N`);
-            return;
-        }
-
-        const result = {
-            series: series,
-            connection: connType === 'welded' ? 'Сварное (Проушины)' : 'Резьбовое',
-            stroke: stroke,
-            length: length,
-            force: force
-        };
-
-        tg.sendData(JSON.stringify(result));
     }
 
-    // Первичная настройка
-    handleSeriesChange();
+    function openDetail(side) {
+        const conn = document.getElementById('connection').value;
+        if (conn === 'welded') return;
+
+        const selectId = side === 'a' ? 'attach-a' : 'attach-b';
+        const val = document.getElementById(selectId).value.split('|')[0];
+        const tip = attachments.find(a => a.id === val);
+
+        if (tip && tip.id !== 'none') {
+            document.getElementById('modal-title').innerText = "Чертеж: " + tip.name;
+            document.getElementById('modal-img').src = tip.detail;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function validateForce() {
+        const series = document.getElementById('series').value;
+        const lim = seriesLimits[series];
+        const forceInp = document.getElementById('force');
+        const orderBtn = document.getElementById('order-btn');
+        const val = parseInt(forceInp.value);
+
+        if (val < lim.min || val > lim.max || isNaN(val)) {
+            forceInp.classList.add('error');
+            orderBtn.disabled = true;
+        } else {
+            forceInp.classList.remove('error');
+            orderBtn.disabled = false;
+        }
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        const series = document.getElementById('series').value;
+        const conn = document.getElementById('connection').value;
+        const dimIdx = document.getElementById('dimensions-select').value;
+        const p = springCatalog[conn][series][dimIdx];
+        const force = document.getElementById('force').value || "???";
+
+        if (!p) return;
+
+        let code = "";
+        let l1 = p.l;
+
+        if (conn === "threaded") {
+            const sideA = document.getElementById('attach-a').value.split('|');
+            const sideB = document.getElementById('attach-b').value.split('|');
+            let codeA = sideA[0] === "none" ? "AM" + seriesLimits[series].thread.replace('M','') : sideA[0].split('-')[0];
+            let codeB = sideB[0] === "none" ? "BM" + seriesLimits[series].thread.replace('M','') : sideB[0].split('-')[1] || sideB[0].replace('A','B');
+            l1 += parseFloat(sideA[1]) + parseFloat(sideB[1]);
+            code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
+        } else {
+            code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
+            l1 = p.l;
+        }
+
+        document.getElementById('order-code').innerText = code;
+        document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
+        document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
+    }
+
+    function sendOrder() {
+        const code = document.getElementById('order-code').innerText;
+        tg.sendData(JSON.stringify({ orderCode: code, totalL: document.getElementById('calc-result').innerText }));
+        tg.close();
+    }
+
+    updateUI();
 </script>
 </body>
 </html>
