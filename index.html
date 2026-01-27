@@ -8,8 +8,9 @@
     <style>
         body { font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; -webkit-tap-highlight-color: transparent; }
         
+        /* ЦВЕТА БРЕНДА */
         :root {
-            --brand-blue: #29abe2;
+            --brand-blue: #29abe2; /* Синий как на логотипе Дикон */
             --brand-dark: #2c3e50;
         }
 
@@ -23,8 +24,11 @@
         }
 
         h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 24px; font-weight: bold; }
+        
+        /* Линия под заголовком */
         .header-line { border-bottom: 3px solid var(--brand-blue); margin-bottom: 20px; }
 
+        /* СЕТКА КОНФИГУРАТОРА */
         .config-grid {
             display: grid;
             grid-template-areas: 
@@ -42,61 +46,27 @@
         .center-visual { grid-area: visual; }
         .center-results { grid-area: results; }
 
-        label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 11px; color: #555; text-transform: uppercase; }
-        select { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
+        label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
 
-        /* СТИЛИ ДЛЯ КНОПОК ПЛЮС/МИНУС */
-        .force-stepper {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border: 1px solid #d1d8e0;
-            border-radius: 8px;
-            overflow: hidden;
-            height: 46px;
-            margin-bottom: 10px;
-        }
-
-        .stepper-btn {
-            background: #f8f9fa;
-            border: none;
-            color: var(--brand-blue);
-            font-size: 24px;
-            font-weight: bold;
-            width: 50px;
-            height: 100%;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-        }
-
-        .stepper-btn:active { background: #e9ecef; }
-        
-        .force-input {
-            flex: 1;
-            border: none !important;
+        .tip-box {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 18px !important;
-            font-weight: bold;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: transparent !important;
-            color: #333;
-            outline: none;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
-        /* Остальные стили */
-        .tip-box { border: 1px solid #e0e0e0; padding: 15px; border-radius: 10px; text-align: center; background: #fafafa; display: flex; flex-direction: column; align-items: center; }
         .tip-box.disabled { opacity: 0.4; pointer-events: none; }
         .tip-img { width: 140px; height: 100px; object-fit: contain; margin-bottom: 5px; background: #fff; border-radius: 6px; border: 1px solid #eee; cursor: pointer; }
+        
         .zoom-hint { font-size: 10px; color: var(--brand-blue); font-weight: bold; margin-bottom: 10px; cursor: pointer; }
 
         .params-row { 
             display: grid; 
-            grid-template-columns: 1fr 1fr 1fr 160px; 
+            grid-template-columns: 1fr 1fr 1fr 120px; 
             gap: 15px; 
             background: #fdfdfd;
             padding: 15px;
@@ -104,27 +74,107 @@
             border: 1px solid #efefef;
         }
 
-        .visual-area { text-align: center; padding: 15px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #f0f0f0; position: relative; }
-        .spring-drawing { max-width: 100%; height: auto; max-height: 180px; cursor: pointer; transition: transform 0.2s; }
-        .main-zoom-hint { font-size: 11px; color: var(--brand-blue); font-weight: bold; margin-bottom: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .visual-area {
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+        
+        .spring-drawing { 
+            max-width: 100%; 
+            height: auto; 
+            max-height: 180px; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+        }
+        .spring-drawing:hover {
+            transform: scale(1.02);
+        }
+        .main-zoom-hint {
+            font-size: 11px;
+            color: var(--brand-blue);
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .result-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .order-code-value { background: var(--brand-blue); color: #ffffff; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 16px; text-align: center; font-weight: bold; border: 1px solid #1e8bc2; word-break: break-all; box-shadow: 0 4px 10px rgba(41, 171, 226, 0.2); }
+        
+        /* Артикул: белый текст на синем фоне */
+        .order-code-value { 
+            background: var(--brand-blue); 
+            color: #ffffff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-family: monospace; 
+            font-size: 16px; 
+            text-align: center; 
+            font-weight: bold; 
+            border: 1px solid #1e8bc2; 
+            word-break: break-all; 
+            box-shadow: 0 4px 10px rgba(41, 171, 226, 0.2);
+        }
 
+        input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
         .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -5px; display: block; text-align: center; font-weight: bold; }
 
-        .footer-buttons { display: flex; justify-content: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
-        .btn-save { background: var(--brand-blue); color: #fff; border: none; padding: 16px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%; text-transform: uppercase; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s; }
+        /* Стили подвала с одной кнопкой */
+        .footer-buttons { 
+            display: flex; 
+            justify-content: center; /* Центрируем кнопку */
+            margin-top: 25px; 
+            padding-top: 20px; 
+            border-top: 1px solid #eee; 
+        }
+        
+        .btn-save { 
+            background: var(--brand-blue); 
+            color: #fff; 
+            border: none; 
+            padding: 16px 40px; /* Чуть больше паддинг */
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px; 
+            width: 100%; /* На всю ширину */
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            transition: background 0.2s;
+        }
+        .btn-save:hover { background: #229acb; }
         .btn-save:disabled { background: #ccc; opacity: 0.6; cursor: not-allowed; }
 
+        /* МОДАЛКА */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
         .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 95%; width: 90%; text-align: center; position: relative; }
         .detail-img { max-width: 100%; max-height: 70vh; margin-bottom: 15px; object-fit: contain; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
         .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
         @media (max-width: 800px) {
-            .config-grid { grid-template-columns: 1fr; grid-template-areas: "params" "visual" "sideA" "sideB" "results"; gap: 10px; }
+            .config-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "params"
+                    "visual"
+                    "sideA"
+                    "sideB"
+                    "results";
+                gap: 10px;
+            }
             .params-row { grid-template-columns: 1fr; padding: 10px; }
+            .tip-box { min-height: auto; padding: 10px; }
+            .tip-img { width: 120px; height: 80px; }
             h2 { font-size: 20px; }
         }
     </style>
@@ -136,15 +186,17 @@
     <div class="header-line"></div>
     
     <div class="config-grid">
+        
+        <!-- ПАРАМЕТРЫ -->
         <div class="center-params">
             <div class="params-row">
                 <div>
                     <label>1. Серия:</label>
                     <select id="series" onchange="updateUI()">
-                        <option value="16-1">16-1 (Ø15/Ø6)</option>
-                        <option value="16-2">16-2 (Ø18.5/Ø8)</option>
-                        <option value="16-4">16-4 (Ø22/Ø10)</option>
-                        <option value="16-6">16-6 (Ø28/Ø14)</option>
+                        <option value="16-1">16-1 (Ø напорной трубки 15 мм, Ø штока 6 мм, макс. ход штока 150 мм, усилие от 50 до 400N)</option>
+                        <option value="16-2">16-2 (Ø напорной трубки 18.5 мм, Ø штока 8 мм, макс. ход штока 250 мм, усилие от 80 до 750N)</option>
+                        <option value="16-4">16-4 (Ø напорной трубки 22 мм, Ø штока 10 мм, макс. ход штока 495 мм, усилие от 100 до 1200N)</option>
+                        <option value="16-6">16-6 (Ø напорной трубки 28 мм, Ø штока 14 мм, макс. ход штока 500 мм, усилие от 200 до 2000N)</option>
                     </select>
                 </div>
                 <div>
@@ -160,59 +212,64 @@
                 </div>
                 <div>
                     <label>4. Усилие (Н):</label>
-                    <div class="force-stepper">
-                        <div class="stepper-btn" onclick="stepForce(-50)">−</div>
-                        <input type="number" id="force" class="force-input" value="250" readonly>
-                        <div class="stepper-btn" onclick="stepForce(50)">+</div>
-                    </div>
+                    <input type="number" id="force" oninput="validateForce()" placeholder="250">
                     <span id="force-limits" class="limit-hint">min --H - max --H</span>
                 </div>
             </div>
         </div>
 
+        <!-- КАРТИНКА ПРУЖИНЫ (С ЗУМОМ) -->
         <div class="center-visual">
             <div class="visual-area">
-                <div class="main-zoom-hint" onclick="openMainDrawing()">🔍 НАЖМИТЕ ДЛЯ УВЕЛИЧЕНИЯ</div>
-                <img id="img-spring" src="" class="spring-drawing" onclick="openMainDrawing()">
+                <div class="main-zoom-hint" onclick="openMainDrawing()">
+                    <span>🔍 НАЖМИТЕ ДЛЯ УВЕЛИЧЕНИЯ</span>
+                </div>
+                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing" onclick="openMainDrawing()" title="Нажмите, чтобы приблизить">
             </div>
         </div>
 
+        <!-- СТОРОНА B -->
         <div class="side-a">
             <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-a">
-                <div class="zoom-hint" onclick="openDetail('a')">🔍 ЧЕРТЕЖ</div>
+                <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')">
                 <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
+        <!-- СТОРОНА A -->
         <div class="side-b">
             <label>Сторона А (Трубка):</label>
             <div class="tip-box" id="box-b">
-                <div class="zoom-hint" onclick="openDetail('b')">🔍 ЧЕРТЕЖ</div>
+                <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')">
                 <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
+        <!-- РЕЗУЛЬТАТЫ -->
         <div class="center-results">
             <div class="result-panel">
-                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center;">L1: -- мм</div>
+                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
                 <div id="spec-info" style="font-size: 12px; color: #718096; text-align: center;"></div>
                 <label style="text-align: center; margin-top: 10px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
                 <div id="order-code" class="order-code-value">---</div>
             </div>
         </div>
+
     </div>
 
+    <!-- ПОДВАЛ С ОДНОЙ КНОПКОЙ -->
     <div class="footer-buttons">
         <button id="save-btn" class="btn-save" onclick="sendOrder()">СОХРАНИТЬ КОНФИГУРАЦИЮ</button>
     </div>
 </div>
 
+<!-- МОДАЛКА ЧЕРТЕЖЕЙ -->
 <div id="detailModal" class="modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
-        <h3 id="modal-title">Чертеж</h3>
+        <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
         <img id="modal-img" src="" class="detail-img">
         <div class="modal-btns">
             <button class="btn-confirm" onclick="closeModal()">ОК</button>
@@ -267,7 +324,7 @@
 
     const seriesLimits = {
         "16-1": { min: 50, max: 400, rod: 6, tube: 15, thread: "M6" },
-        "16-2": { min: 100, max: 750, rod: 8, tube: 18.5, thread: "M6" },
+        "16-2": { min: 80, max: 750, rod: 8, tube: 18.5, thread: "M6" },
         "16-4": { min: 100, max: 1200, rod: 10, tube: 22, thread: "M8" },
         "16-6": { min: 200, max: 2000, rod: 14, tube: 28, thread: "M8" }
     };
@@ -286,7 +343,7 @@
         dimSel.innerHTML = "";
         const data = springCatalog[conn][series];
         data.forEach((p, idx) => {
-            dimSel.add(new Option(`L: ${p.l} мм / Ход: ${p.s} мм`, idx));
+            dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
         });
 
         const boxA = document.getElementById('box-a');
@@ -308,29 +365,12 @@
 
         const lim = seriesLimits[series];
         const forceInp = document.getElementById('force');
-        
-        // Сброс усилия на минимум при смене серии
-        forceInp.value = lim.min;
+        forceInp.min = lim.min;
+        forceInp.max = lim.max;
         document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
         
         updateTipImages();
-        calculateTotal();
-    }
-
-    // НОВАЯ ФУНКЦИЯ ДЛЯ КНОПОК ШАГА
-    function stepForce(delta) {
-        const series = document.getElementById('series').value;
-        const lim = seriesLimits[series];
-        const forceInp = document.getElementById('force');
-        let val = parseInt(forceInp.value) || lim.min;
-
-        val += delta;
-
-        // Ограничения
-        if (val < lim.min) val = lim.min;
-        if (val > lim.max) val = lim.max;
-
-        forceInp.value = val;
+        validateForce();
         calculateTotal();
     }
 
@@ -382,12 +422,28 @@
 
     function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
 
+    function validateForce() {
+        const series = document.getElementById('series').value;
+        const lim = seriesLimits[series];
+        const forceInp = document.getElementById('force');
+        const saveBtn = document.getElementById('save-btn');
+        const val = parseInt(forceInp.value);
+        if (val < lim.min || val > lim.max || isNaN(val)) {
+            forceInp.classList.add('error');
+            saveBtn.disabled = true;
+        } else {
+            forceInp.classList.remove('error');
+            saveBtn.disabled = false;
+        }
+        calculateTotal();
+    }
+
     function calculateTotal() {
         const series = document.getElementById('series').value;
         const conn = document.getElementById('connection').value;
         const dimIdx = document.getElementById('dimensions-select').value;
         const p = springCatalog[conn][series][dimIdx];
-        const force = document.getElementById('force').value;
+        const force = document.getElementById('force').value || "???";
         if (!p) return;
 
         let code = "";
@@ -398,14 +454,15 @@
             const sideB = document.getElementById('attach-b').value.split('|');
             let codeA = sideA[0] === "none" ? "AM" + seriesLimits[series].thread.replace('M','') : sideA[0].split('-')[0];
             let codeB = sideB[0] === "none" ? "BM" + seriesLimits[series].thread.replace('M','') : sideB[0].split('-')[1] || sideB[0].replace('A','B');
-            l1 += parseFloat(sideA[1] || 0) + parseFloat(sideB[1] || 0);
+            l1 += parseFloat(sideA[1]) + parseFloat(sideB[1]);
             code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
         } else {
             code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
+            l1 = p.l;
         }
         document.getElementById('order-code').innerText = code;
         document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
-        document.getElementById('spec-info').innerHTML = `Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
+        document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
     }
 
     function sendOrder() {
