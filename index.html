@@ -49,6 +49,12 @@
         label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
         select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
 
+        /* Стили для поля ввода, чтобы оно выглядело как на макете */
+        input[type=number] {
+            -moz-appearance: textfield;
+            font-weight: bold;
+        }
+
         .tip-box {
             border: 1px solid #e0e0e0;
             padding: 15px;
@@ -131,7 +137,7 @@
         /* Стили подвала с одной кнопкой */
         .footer-buttons { 
             display: flex; 
-            justify-content: center; /* Центрируем кнопку */
+            justify-content: center; 
             margin-top: 25px; 
             padding-top: 20px; 
             border-top: 1px solid #eee; 
@@ -141,12 +147,12 @@
             background: var(--brand-blue); 
             color: #fff; 
             border: none; 
-            padding: 16px 40px; /* Чуть больше паддинг */
+            padding: 16px 40px; 
             border-radius: 8px; 
             font-weight: bold; 
             cursor: pointer; 
             font-size: 16px; 
-            width: 100%; /* На всю ширину */
+            width: 100%; 
             text-transform: uppercase;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             transition: background 0.2s;
@@ -193,10 +199,10 @@
                 <div>
                     <label>1. Серия:</label>
                     <select id="series" onchange="updateUI()">
-                        <option value="16-1">16-1 (Ø напорной трубки 15 мм, Ø штока 6 мм, макс. ход штока 150 мм, усилие от 50 до 400N)</option>
-                        <option value="16-2">16-2 (Ø напорной трубки 18.5 мм, Ø штока 8 мм, макс. ход штока 250 мм, усилие от 80 до 750N)</option>
-                        <option value="16-4">16-4 (Ø напорной трубки 22 мм, Ø штока 10 мм, макс. ход штока 495 мм, усилие от 100 до 1200N)</option>
-                        <option value="16-6">16-6 (Ø напорной трубки 28 мм, Ø штока 14 мм, макс. ход штока 500 мм, усилие от 200 до 2000N)</option>
+                        <option value="16-1">16-1 (Ø напорной трубки 15 мм, Ø штока 6 мм)</option>
+                        <option value="16-2">16-2 (Ø напорной трубки 18.5 мм, Ø штока 8 мм)</option>
+                        <option value="16-4">16-4 (Ø напорной трубки 22 мм, Ø штока 10 мм)</option>
+                        <option value="16-6">16-6 (Ø напорной трубки 28 мм, Ø штока 14 мм)</option>
                     </select>
                 </div>
                 <div>
@@ -212,13 +218,14 @@
                 </div>
                 <div>
                     <label>4. Усилие (Н):</label>
-                    <input type="number" id="force" oninput="validateForce()" placeholder="250">
+                    <!-- Изменено: добавлен step=50 и запрет ввода с клавиатуры -->
+                    <input type="number" id="force" oninput="validateForce()" step="50" onkeydown="return false;" placeholder="250">
                     <span id="force-limits" class="limit-hint">min --H - max --H</span>
                 </div>
             </div>
         </div>
 
-        <!-- КАРТИНКА ПРУЖИНЫ (С ЗУМОМ) -->
+        <!-- КАРТИНКА ПРУЖИНЫ -->
         <div class="center-visual">
             <div class="visual-area">
                 <div class="main-zoom-hint" onclick="openMainDrawing()">
@@ -260,13 +267,12 @@
 
     </div>
 
-    <!-- ПОДВАЛ С ОДНОЙ КНОПКОЙ -->
     <div class="footer-buttons">
         <button id="save-btn" class="btn-save" onclick="sendOrder()">СОХРАНИТЬ КОНФИГУРАЦИЮ</button>
     </div>
 </div>
 
-<!-- МОДАЛКА ЧЕРТЕЖЕЙ -->
+<!-- МОДАЛКА -->
 <div id="detailModal" class="modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
         <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
@@ -324,7 +330,7 @@
 
     const seriesLimits = {
         "16-1": { min: 50, max: 400, rod: 6, tube: 15, thread: "M6" },
-        "16-2": { min: 80, max: 750, rod: 8, tube: 18.5, thread: "M6" },
+        "16-2": { min: 100, max: 750, rod: 8, tube: 18.5, thread: "M6" },
         "16-4": { min: 100, max: 1200, rod: 10, tube: 22, thread: "M8" },
         "16-6": { min: 200, max: 2000, rod: 14, tube: 28, thread: "M8" }
     };
@@ -343,7 +349,7 @@
         dimSel.innerHTML = "";
         const data = springCatalog[conn][series];
         data.forEach((p, idx) => {
-            dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
+            dimSel.add(new Option(`L: ${p.l} мм / Ход: ${p.s} мм`, idx));
         });
 
         const boxA = document.getElementById('box-a');
@@ -365,8 +371,19 @@
 
         const lim = seriesLimits[series];
         const forceInp = document.getElementById('force');
+        
+        // Настройка поля Усилия
         forceInp.min = lim.min;
         forceInp.max = lim.max;
+        forceInp.step = 50; 
+        
+        // Авто-коррекция значения под шаг 50 при смене серии
+        let currentVal = parseInt(forceInp.value) || 250;
+        if (currentVal < lim.min) currentVal = lim.min;
+        if (currentVal > lim.max) currentVal = lim.max;
+        // Округляем до ближайшего кратного 50 (относительно 0), но не ниже минимума
+        forceInp.value = Math.max(lim.min, Math.round(currentVal / 50) * 50);
+
         document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
         
         updateTipImages();
@@ -426,11 +443,15 @@
         const series = document.getElementById('series').value;
         const lim = seriesLimits[series];
         const forceInp = document.getElementById('force');
+        const saveBtn = document.getElementById('save-btn');
         const val = parseInt(forceInp.value);
+
         if (val < lim.min || val > lim.max || isNaN(val)) {
             forceInp.classList.add('error');
+            saveBtn.disabled = true;
         } else {
             forceInp.classList.remove('error');
+            saveBtn.disabled = false;
         }
         calculateTotal();
     }
@@ -463,24 +484,11 @@
     }
 
     function sendOrder() {
-        const series = document.getElementById('series').value;
-        const lim = seriesLimits[series];
-        const forceInp = document.getElementById('force');
-        const val = parseInt(forceInp.value);
-
-        if (val < lim.min || val > lim.max || isNaN(val)) {
-            const errorMsg = `Выбрано неверное усилие! Для серии ${series} допустимый диапазон: от ${lim.min} до ${lim.max} N.`;
-            if (tg.showAlert) {
-                tg.showAlert(errorMsg);
-            } else {
-                alert(errorMsg);
-            }
-            forceInp.focus();
-            return;
-        }
-
         const code = document.getElementById('order-code').innerText;
-        tg.sendData(JSON.stringify({ orderCode: code, totalL: document.getElementById('calc-result').innerText }));
+        tg.sendData(JSON.stringify({ 
+            orderCode: code, 
+            totalL: document.getElementById('calc-result').innerText 
+        }));
         tg.close();
     }
 
