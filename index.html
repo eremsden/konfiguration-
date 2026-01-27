@@ -8,6 +8,12 @@
     <style>
         body { font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; -webkit-tap-highlight-color: transparent; }
         
+        /* ОСНОВНОЙ ЦВЕТ ЛОГОТИПА (ГОЛУБОЙ) */
+        :root {
+            --brand-blue: #29abe2; /* Цвет с логотипа */
+            --brand-dark: #2c3e50;
+        }
+
         .card { 
             background: white; 
             padding: 20px; 
@@ -18,12 +24,13 @@
         }
 
         h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 24px; font-weight: bold; }
-        .header-line { border-bottom: 3px solid #f39c12; margin-bottom: 20px; }
+        
+        /* Цвет линии под заголовком изменен на синий */
+        .header-line { border-bottom: 3px solid var(--brand-blue); margin-bottom: 20px; }
 
         /* СЕТКА КОНФИГУРАТОРА */
         .config-grid {
             display: grid;
-            /* Определяем области для перестановки */
             grid-template-areas: 
                 "sideA params sideB"
                 "sideA visual sideB"
@@ -33,14 +40,12 @@
             align-items: start;
         }
 
-        /* Назначение областей */
         .side-a { grid-area: sideA; }
         .side-b { grid-area: sideB; }
         .center-params { grid-area: params; }
         .center-visual { grid-area: visual; }
         .center-results { grid-area: results; }
 
-        /* Стили элементов */
         label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
         select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
 
@@ -56,9 +61,10 @@
         }
         .tip-box.disabled { opacity: 0.4; pointer-events: none; }
         .tip-img { width: 140px; height: 100px; object-fit: contain; margin-bottom: 5px; background: #fff; border-radius: 6px; border: 1px solid #eee; cursor: pointer; }
-        .zoom-hint { font-size: 10px; color: #f39c12; font-weight: bold; margin-bottom: 10px; }
+        
+        /* Цвет текста подсказок зума изменен на синий */
+        .zoom-hint { font-size: 10px; color: var(--brand-blue); font-weight: bold; margin-bottom: 10px; cursor: pointer; }
 
-        /* Параметры в ряд на ПК */
         .params-row { 
             display: grid; 
             grid-template-columns: 1fr 1fr 1fr 120px; 
@@ -74,33 +80,83 @@
             padding: 15px;
             background: #fff;
             display: flex;
+            flex-direction: column; /* Изменено для размещения текста */
             align-items: center;
             justify-content: center;
             border-radius: 10px;
             border: 1px solid #f0f0f0;
+            position: relative;
         }
-        .spring-drawing { max-width: 100%; height: auto; max-height: 180px; }
+        
+        /* Стили для кликабельного основного чертежа */
+        .spring-drawing { 
+            max-width: 100%; 
+            height: auto; 
+            max-height: 180px; 
+            cursor: pointer; /* Курсор руки */
+            transition: transform 0.2s;
+        }
+        .spring-drawing:hover {
+            transform: scale(1.02);
+        }
+        .main-zoom-hint {
+            font-size: 11px;
+            color: var(--brand-blue);
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .result-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .order-code-value { background: #2c3e50; color: #f39c12; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 16px; text-align: center; font-weight: bold; border: 1px solid #34495e; word-break: break-all; }
+        
+        /* ИЗМЕНЕНО: Артикул белый на синем фоне */
+        .order-code-value { 
+            background: var(--brand-blue); 
+            color: #ffffff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-family: monospace; 
+            font-size: 16px; 
+            text-align: center; 
+            font-weight: bold; 
+            border: 1px solid #1e8bc2; 
+            word-break: break-all; 
+            box-shadow: 0 4px 10px rgba(41, 171, 226, 0.2);
+        }
 
         input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
         .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -5px; display: block; text-align: center; font-weight: bold; }
 
         .footer-buttons { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; gap: 10px; }
         .btn-print { background: #e2e8f0; color: #4a5568; border: none; padding: 14px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; }
-        .btn-order { background: #f39c12; color: #000; border: none; padding: 14px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; flex: 2; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* ИЗМЕНЕНО: Кнопка заказа синяя */
+        .btn-order { 
+            background: var(--brand-blue); 
+            color: #fff; 
+            border: none; 
+            padding: 14px 40px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 16px; 
+            flex: 2; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        .btn-order:hover { background: #229acb; }
         .btn-order:disabled { background: #ccc; opacity: 0.6; }
 
         /* МОДАЛКА */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 95%; text-align: center; }
-        .detail-img { max-width: 100%; max-height: 70vh; margin-bottom: 15px; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 95%; width: 90%; text-align: center; position: relative; }
+        .detail-img { max-width: 100%; max-height: 70vh; margin-bottom: 15px; object-fit: contain; }
         .modal-btns { display: flex; gap: 10px; justify-content: center; }
-        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; }
-        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; }
+        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-back { background: #e74c3c; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        /* ПОРЯДОК ДЛЯ МОБИЛЬНЫХ (Адаптация) */
         @media (max-width: 800px) {
             .config-grid {
                 grid-template-columns: 1fr;
@@ -127,7 +183,7 @@
     
     <div class="config-grid">
         
-        <!-- ПАРАМЕТРЫ (ВЕРХ) -->
+        <!-- ПАРАМЕТРЫ -->
         <div class="center-params">
             <div class="params-row">
                 <div>
@@ -158,10 +214,15 @@
             </div>
         </div>
 
-        <!-- КАРТИНКА ПРУЖИНЫ -->
+        <!-- КАРТИНКА ПРУЖИНЫ (С ФУНКЦИЕЙ ЗУМА) -->
         <div class="center-visual">
             <div class="visual-area">
-                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing">
+                <!-- Надпись-подсказка -->
+                <div class="main-zoom-hint" onclick="openMainDrawing()">
+                    <span>🔍 НАЖМИТЕ ДЛЯ УВЕЛИЧЕНИЯ</span>
+                </div>
+                <!-- Картинка с событием onclick -->
+                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing" onclick="openMainDrawing()" title="Нажмите, чтобы приблизить">
             </div>
         </div>
 
@@ -185,12 +246,13 @@
             </div>
         </div>
 
-        <!-- РЕЗУЛЬТАТЫ (НИЗ) -->
+        <!-- РЕЗУЛЬТАТЫ -->
         <div class="center-results">
             <div class="result-panel">
                 <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
                 <div id="spec-info" style="font-size: 12px; color: #718096; text-align: center;"></div>
                 <label style="text-align: center; margin-top: 10px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
+                <!-- Теперь класс order-code-value имеет синий фон и белый текст -->
                 <div id="order-code" class="order-code-value">---</div>
             </div>
         </div>
@@ -203,14 +265,13 @@
     </div>
 </div>
 
-<!-- МОДАЛКА ЧЕРТЕЖЕЙ -->
-<div id="detailModal" class="modal">
+<!-- МОДАЛКА ЧЕРТЕЖЕЙ (ОБЩАЯ) -->
+<div id="detailModal" class="modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
-        <h3 id="modal-title" style="margin-top: 0;">Технический чертеж</h3>
+        <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
         <img id="modal-img" src="" class="detail-img">
         <div class="modal-btns">
-            <button class="btn-confirm" onclick="closeModal()">ПОДТВЕРДИТЬ</button>
-            <button class="btn-back" onclick="closeModal()">НАЗАД</button>
+            <button class="btn-confirm" onclick="closeModal()">ОК</button>
         </div>
     </div>
 </div>
@@ -338,6 +399,7 @@
         }
     }
 
+    // Функция для открытия чертежа наконечника
     function openDetail(side) {
         const conn = document.getElementById('connection').value;
         if (conn === 'welded') return;
@@ -345,9 +407,18 @@
         const val = document.getElementById(selectId).value.split('|')[0];
         const tip = attachments.find(a => a.id === val);
         if (tip && tip.id !== 'none') {
+            document.getElementById('modal-title').innerText = "Чертеж наконечника";
             document.getElementById('modal-img').src = tip.detail;
             document.getElementById('detailModal').style.display = 'flex';
         }
+    }
+
+    // НОВАЯ ФУНКЦИЯ: Открытие основного чертежа (пружины)
+    function openMainDrawing() {
+        const currentSrc = document.getElementById('img-spring').src;
+        document.getElementById('modal-title').innerText = "Схема пружины";
+        document.getElementById('modal-img').src = currentSrc; // Здесь используется та же картинка, при наличии HD версий путь можно менять
+        document.getElementById('detailModal').style.display = 'flex';
     }
 
     function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
