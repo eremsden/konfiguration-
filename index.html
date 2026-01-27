@@ -182,7 +182,7 @@
 <body>
 
 <div class="card">
-    <h2>Конфигуратор</h2>
+    <h2>Конфигуратор Дикон</h2>
     <div class="header-line"></div>
     
     <div class="config-grid">
@@ -193,10 +193,10 @@
                 <div>
                     <label>1. Серия:</label>
                     <select id="series" onchange="updateUI()">
-                        <option value="16-1">16-1 (Ø15/6)</option>
-                        <option value="16-2">16-2 (Ø18.5/8)</option>
-                        <option value="16-4">16-4 (Ø22/10)</option>
-                        <option value="16-6">16-6 (Ø28/14)</option>
+                        <option value="16-1">16-1 (Ø напорной трубки 15 мм, Ø штока 6 мм, макс. ход штока 150 мм, усилие от 50 до 400N)</option>
+                        <option value="16-2">16-2 (Ø напорной трубки 18.5 мм, Ø штока 8 мм, макс. ход штока 250 мм, усилие от 80 до 750N)</option>
+                        <option value="16-4">16-4 (Ø напорной трубки 22 мм, Ø штока 10 мм, макс. ход штока 495 мм, усилие от 100 до 1200N)</option>
+                        <option value="16-6">16-6 (Ø напорной трубки 28 мм, Ø штока 14 мм, макс. ход штока 500 мм, усилие от 200 до 2000N)</option>
                     </select>
                 </div>
                 <div>
@@ -228,9 +228,9 @@
             </div>
         </div>
 
-        <!-- СТОРОНА А -->
+        <!-- СТОРОНА B -->
         <div class="side-a">
-            <label>Сторона А (Трубка):</label>
+            <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-a">
                 <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')">
@@ -238,9 +238,9 @@
             </div>
         </div>
 
-        <!-- СТОРОНА B -->
+        <!-- СТОРОНА A -->
         <div class="side-b">
-            <label>Сторона B (Шток):</label>
+            <label>Сторона А (Трубка):</label>
             <div class="tip-box" id="box-b">
                 <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')">
@@ -289,7 +289,7 @@
             "16-6": [{l:218, s:70, t:118, r:100}, {l:268, s:98, t:168, r:100}, {l:368, s:145, t:218, r:150}, {l:468, s:198, t:268, r:200}, {l:568, s:248, t:318, r:250}, {l:668, s:298, t:368, r:300}, {l:768, s:348, t:418, r:350}, {l:874, s:398, t:474, r:400}, {l:963, s:450, t:508, r:455}, {l:1070, s:500, t:565, r:505}]
         },
         welded: {
-            "16-1": [{l:106, s:20, t:57, r:26, a:'A17', b:'B17'}, {l:146, s:40, t:78, r:45, a:'A17', b:'B17'}, {l:160, s:45, t:86, r:51, a:'A17', b:'B17'}, {l:179, s:55, t:96, r:60, a:'A17', b:'B17'}, {l:186, s:60, t:96, r:67, a:'A17', b:'B17'}, {l:224, s:80, t:111, r:90, a:'A17', b:'B17'}, {l:264, s:100, t:131, r:110, a:'A17', b:'B17'}, {l:306, s:110, t:168, r:115, a:'A17', b:'B17'}, {l:366, s:150, t:189, r:154, a:'A17', b:'B17'}],
+            "16-1": [{l:106, s:20, t:57, r:26, a:'A17', b:'B17'}, {l:146, s:40, t:78, r:45, a:'A17', b:'B17'}, {l:160, s:45, t:86, r:51, a:'A17', b:'B17'}, {l:179, s:55, t:96, r:60, a:'A17', b:'B17'}, {l:186, s:60, t:96, r:67, a:'A17', b:'B17'}, {l:224, s:80, t:111, r:90, a:'A17', b:'B17'}, {l:264, s:100, t:131, r:110, a:'A17', b:'B17'}, {l:306, s:110, t:168, r:115, a:'A17', b:'B17'}, {l:305.5, s:120, t:157.5, r:125, a:'A17', b:'B17'},{l:366, s:150, t:189, r:154, a:'A17', b:'B17'}],
             "16-2": [{l:206.5, s:60, t:108, r:65, a:'A107', b:'B23'}, {l:246.5, s:80, t:128, r:85, a:'A107', b:'B23'}, {l:256.5, s:90, t:128, r:95, a:'A107', b:'B23'}, {l:286.5, s:100, t:143, r:110, a:'A107', b:'B23'}, {l:316.5, s:120, t:158, r:125, a:'A107', b:'B23'}, {l:326.5, s:120, t:168, r:125, a:'A107', b:'B23'}, {l:354.5, s:133, t:183, r:138, a:'A107', b:'B23'}, {l:364.5, s:140, t:186, r:145, a:'A107', b:'B23'}, {l:407.5, s:160, t:201, r:173, a:'A107', b:'B23'}, {l:444, s:178, t:229.5, r:181, a:'A107', b:'B23'}, {l:485.5, s:200, t:240, r:212, a:'A107', b:'B23'}, {l:525.5, s:220, t:267, r:225, a:'A107', b:'B23'}, {l:586.5, s:250, t:291, r:262, a:'A107', b:'B23'}],
             "16-4": [{l:283, s:95, t:153, r:100, a:'A23', b:'B23'}, {l:383, s:145, t:203, r:150, a:'A23', b:'B23'}, {l:483, s:195, t:253, r:200, a:'A23', b:'B23'}, {l:586, s:245, t:294, r:262, a:'A23', b:'B23'}, {l:683, s:295, t:353, r:300, a:'A23', b:'B23'}, {l:783, s:345, t:403, r:350, a:'A23', b:'B23'}, {l:883, s:395, t:453, r:400, a:'A23', b:'B23'}, {l:983, s:445, t:503, r:450, a:'A23', b:'B23'}, {l:1083, s:495, t:553, r:500, a:'A23', b:'B23'}],
             "16-6": [] 
@@ -343,7 +343,7 @@
         dimSel.innerHTML = "";
         const data = springCatalog[conn][series];
         data.forEach((p, idx) => {
-            dimSel.add(new Option(`L: ${p.l} мм / Ход: ${p.s} мм`, idx));
+            dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
         });
 
         const boxA = document.getElementById('box-a');
@@ -426,14 +426,11 @@
         const series = document.getElementById('series').value;
         const lim = seriesLimits[series];
         const forceInp = document.getElementById('force');
-        const saveBtn = document.getElementById('save-btn');
         const val = parseInt(forceInp.value);
         if (val < lim.min || val > lim.max || isNaN(val)) {
             forceInp.classList.add('error');
-            saveBtn.disabled = true;
         } else {
             forceInp.classList.remove('error');
-            saveBtn.disabled = false;
         }
         calculateTotal();
     }
@@ -466,6 +463,22 @@
     }
 
     function sendOrder() {
+        const series = document.getElementById('series').value;
+        const lim = seriesLimits[series];
+        const forceInp = document.getElementById('force');
+        const val = parseInt(forceInp.value);
+
+        if (val < lim.min || val > lim.max || isNaN(val)) {
+            const errorMsg = `Выбрано неверное усилие! Для серии ${series} допустимый диапазон: от ${lim.min} до ${lim.max} N.`;
+            if (tg.showAlert) {
+                tg.showAlert(errorMsg);
+            } else {
+                alert(errorMsg);
+            }
+            forceInp.focus();
+            return;
+        }
+
         const code = document.getElementById('order-code').innerText;
         tg.sendData(JSON.stringify({ orderCode: code, totalL: document.getElementById('calc-result').innerText }));
         tg.close();
