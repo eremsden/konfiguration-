@@ -81,6 +81,7 @@
             margin-bottom: 10px; 
         }
 
+        /* Стили для контейнера с подсказкой */
         .tip-box {
             border: 1px solid #e0e0e0;
             padding: 15px;
@@ -90,11 +91,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            margin-top: 60px; /* Опускаем блоки вниз */
         }
+        
+        /* Для левой колонки */
+        .side-a .tip-box {
+            margin-top: 85px; /* Дополнительный отступ для выравнивания с чертежом */
+        }
+        
+        /* Для правой колонки */
+        .side-b .tip-box {
+            margin-top: 85px; /* Дополнительный отступ для выравнивания с чертежом */
+        }
+        
         .tip-box.disabled { 
             opacity: 0.4; 
             pointer-events: none; 
         }
+        
         .tip-img { 
             width: 140px; 
             height: 100px; 
@@ -104,6 +119,11 @@
             border-radius: 6px; 
             border: 1px solid #eee; 
             cursor: pointer; 
+            transition: transform 0.2s;
+        }
+        .tip-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
         .zoom-hint { 
@@ -281,6 +301,63 @@
             cursor: pointer; 
         }
 
+        /* Стили для тултипа с изображением */
+        .tooltip-image {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-image .tooltip-img {
+            visibility: hidden;
+            width: 200px;
+            height: 150px;
+            background-color: white;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 5px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+            pointer-events: none;
+        }
+
+        .tooltip-image .tooltip-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .tooltip-image:hover .tooltip-img {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Стили для элементов выпадающего списка с изображениями */
+        .option-with-image {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .option-with-image img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        /* Кастомный стиль для опций (не во всех браузерах работает) */
+        select option {
+            padding: 5px;
+        }
+
         @media (max-width: 800px) {
             .config-grid {
                 grid-template-columns: 1fr;
@@ -299,6 +376,7 @@
             .tip-box { 
                 min-height: auto; 
                 padding: 10px; 
+                margin-top: 0 !important; /* Убираем отступы на мобильных */
             }
             .tip-img { 
                 width: 120px; 
@@ -372,8 +450,13 @@
             <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-a">
                 <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Наконечник стороны B">
-                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
+                <div class="tooltip-image">
+                    <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Наконечник стороны B">
+                    <div class="tooltip-img" id="tooltip-a">
+                        <img src="img/tips/none.png" alt="Предпросмотр">
+                    </div>
+                </div>
+                <select id="attach-a" onchange="updateTipImages(); calculateTotal(); updateTooltipImage('a')"></select>
             </div>
         </div>
 
@@ -382,8 +465,13 @@
             <label>Сторона А (Трубка):</label>
             <div class="tip-box" id="box-b">
                 <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Наконечник стороны A">
-                <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
+                <div class="tooltip-image">
+                    <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Наконечник стороны A">
+                    <div class="tooltip-img" id="tooltip-b">
+                        <img src="img/tips/none.png" alt="Предпросмотр">
+                    </div>
+                </div>
+                <select id="attach-b" onchange="updateTipImages(); calculateTotal(); updateTooltipImage('b')"></select>
             </div>
         </div>
 
@@ -547,11 +635,29 @@
             const valB = document.getElementById('attach-b').value.split('|')[0];
             const tipA = attachments.find(a => a.id === valA);
             const tipB = attachments.find(a => a.id === valB);
-            if (tipA) document.getElementById('img-a').src = tipA.img;
-            if (tipB) document.getElementById('img-b').src = tipB.img;
+            if (tipA) {
+                document.getElementById('img-a').src = tipA.img;
+                updateTooltipImage('a');
+            }
+            if (tipB) {
+                document.getElementById('img-b').src = tipB.img;
+                updateTooltipImage('b');
+            }
         } else {
             document.getElementById('img-a').src = "img/tips/welded-eye.png";
             document.getElementById('img-b').src = "img/tips/welded-eye.png";
+            updateTooltipImage('a');
+            updateTooltipImage('b');
+        }
+    }
+
+    // Функция для обновления изображения в тултипе
+    function updateTooltipImage(side) {
+        const sideId = side === 'a' ? 'a' : 'b';
+        const imgElement = document.getElementById(`img-${sideId}`);
+        const tooltipImg = document.querySelector(`#tooltip-${sideId} img`);
+        if (imgElement && tooltipImg) {
+            tooltipImg.src = imgElement.src;
         }
     }
 
