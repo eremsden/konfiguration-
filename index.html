@@ -2,15 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SUSPA Configurator</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конфигуратор Дикон - Газовые пружины</title>
     <style>
-        body { font-family: -apple-system, system-ui, sans-serif; background: #f0f2f5; padding: 10px; color: #333; margin: 0; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background: #f0f2f5; 
+            padding: 10px; 
+            color: #333; 
+            margin: 0; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
         /* ЦВЕТА БРЕНДА */
         :root {
-            --brand-blue: #29abe2; /* Синий как на логотипе Дикон */
+            --brand-blue: #29abe2;
             --brand-dark: #2c3e50;
         }
 
@@ -20,15 +26,24 @@
             border-radius: 12px; 
             box-shadow: 0 2px 15px rgba(0,0,0,0.08); 
             max-width: 1100px; 
-            margin: auto; 
+            margin: 20px auto; 
         }
 
-        h2 { color: #000; text-align: left; margin: 0 0 10px 0; font-size: 24px; font-weight: bold; }
+        h2 { 
+            color: #000; 
+            text-align: left; 
+            margin: 0 0 10px 0; 
+            font-size: 24px; 
+            font-weight: bold; 
+        }
         
         /* Линия под заголовком */
-        .header-line { border-bottom: 3px solid var(--brand-blue); margin-bottom: 20px; }
+        .header-line { 
+            border-bottom: 3px solid var(--brand-blue); 
+            margin-bottom: 20px; 
+        }
 
-        /* СЕТКА КОНФИГУРАТОРА */
+        /* СЕТКА КОНФИГУРАТОРА - ТРИ КОЛОНКИ */
         .config-grid {
             display: grid;
             grid-template-areas: 
@@ -46,8 +61,25 @@
         .center-visual { grid-area: visual; }
         .center-results { grid-area: results; }
 
-        label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 12px; color: #555; text-transform: uppercase; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #d1d8e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fff; margin-bottom: 10px; }
+        label { 
+            display: block; 
+            margin: 12px 0 6px; 
+            font-weight: bold; 
+            font-size: 12px; 
+            color: #555; 
+            text-transform: uppercase; 
+        }
+        
+        select, input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #d1d8e0; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            background: #fff; 
+            margin-bottom: 10px; 
+        }
 
         .tip-box {
             border: 1px solid #e0e0e0;
@@ -59,10 +91,28 @@
             flex-direction: column;
             align-items: center;
         }
-        .tip-box.disabled { opacity: 0.4; pointer-events: none; }
-        .tip-img { width: 140px; height: 100px; object-fit: contain; margin-bottom: 5px; background: #fff; border-radius: 6px; border: 1px solid #eee; cursor: pointer; }
+        .tip-box.disabled { 
+            opacity: 0.4; 
+            pointer-events: none; 
+        }
+        .tip-img { 
+            width: 140px; 
+            height: 100px; 
+            object-fit: contain; 
+            margin-bottom: 5px; 
+            background: #fff; 
+            border-radius: 6px; 
+            border: 1px solid #eee; 
+            cursor: pointer; 
+        }
         
-        .zoom-hint { font-size: 10px; color: var(--brand-blue); font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .zoom-hint { 
+            font-size: 10px; 
+            color: var(--brand-blue); 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            cursor: pointer; 
+        }
 
         .params-row { 
             display: grid; 
@@ -108,7 +158,12 @@
             gap: 5px;
         }
 
-        .result-panel { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .result-panel { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-top: 10px; 
+        }
         
         /* Артикул: белый текст на синем фоне */
         .order-code-value { 
@@ -125,41 +180,106 @@
             box-shadow: 0 4px 10px rgba(41, 171, 226, 0.2);
         }
 
-        input.error { border-color: #e74c3c !important; background: #fff5f5; color: #e74c3c; }
-        .limit-hint { font-size: 11px; color: #7f8c8d; margin-top: -5px; display: block; text-align: center; font-weight: bold; }
+        input.error { 
+            border-color: #e74c3c !important; 
+            background: #fff5f5; 
+            color: #e74c3c; 
+        }
+        .limit-hint { 
+            font-size: 11px; 
+            color: #7f8c8d; 
+            margin-top: -5px; 
+            display: block; 
+            text-align: center; 
+            font-weight: bold; 
+        }
 
-        /* Стили подвала с одной кнопкой */
+        /* Стили подвала с кнопками */
         .footer-buttons { 
             display: flex; 
-            justify-content: center; /* Центрируем кнопку */
+            justify-content: center;
+            gap: 15px;
             margin-top: 25px; 
             padding-top: 20px; 
             border-top: 1px solid #eee; 
         }
         
-        .btn-save { 
-            background: var(--brand-blue); 
-            color: #fff; 
+        .btn { 
             border: none; 
-            padding: 16px 40px; /* Чуть больше паддинг */
+            padding: 16px 40px; 
             border-radius: 8px; 
             font-weight: bold; 
             cursor: pointer; 
             font-size: 16px; 
-            width: 100%; /* На всю ширину */
             text-transform: uppercase;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             transition: background 0.2s;
         }
-        .btn-save:hover { background: #229acb; }
-        .btn-save:disabled { background: #ccc; opacity: 0.6; cursor: not-allowed; }
+        
+        .btn-save { 
+            background: var(--brand-blue); 
+            color: #fff; 
+        }
+        .btn-save:hover { 
+            background: #229acb; 
+        }
+        .btn-save:disabled { 
+            background: #ccc; 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+        }
+        
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .btn-reset:hover {
+            background: #d0d0d0;
+        }
 
         /* МОДАЛКА */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 95%; width: 90%; text-align: center; position: relative; }
-        .detail-img { max-width: 100%; max-height: 70vh; margin-bottom: 15px; object-fit: contain; }
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
-        .btn-confirm { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.85); 
+            backdrop-filter: blur(4px); 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            max-width: 95%; 
+            width: 90%; 
+            text-align: center; 
+            position: relative; 
+        }
+        .detail-img { 
+            max-width: 100%; 
+            max-height: 70vh; 
+            margin-bottom: 15px; 
+            object-fit: contain; 
+        }
+        .modal-btns { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+        }
+        .btn-confirm { 
+            background: #27ae60; 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
 
         @media (max-width: 800px) {
             .config-grid {
@@ -172,22 +292,41 @@
                     "results";
                 gap: 10px;
             }
-            .params-row { grid-template-columns: 1fr; padding: 10px; }
-            .tip-box { min-height: auto; padding: 10px; }
-            .tip-img { width: 120px; height: 80px; }
-            h2 { font-size: 20px; }
+            .params-row { 
+                grid-template-columns: 1fr; 
+                padding: 10px; 
+            }
+            .tip-box { 
+                min-height: auto; 
+                padding: 10px; 
+            }
+            .tip-img { 
+                width: 120px; 
+                height: 80px; 
+            }
+            h2 { 
+                font-size: 20px; 
+            }
+            
+            .footer-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Конфигуратор Дикон</h2>
+    <h2>Конфигуратор газовых пружин Дикон</h2>
     <div class="header-line"></div>
     
     <div class="config-grid">
         
-        <!-- ПАРАМЕТРЫ -->
+        <!-- ПАРАМЕТРЫ (ЦЕНТР, ВВЕРХУ) -->
         <div class="center-params">
             <div class="params-row">
                 <div>
@@ -218,37 +357,37 @@
             </div>
         </div>
 
-        <!-- КАРТИНКА ПРУЖИНЫ (С ЗУМОМ) -->
+        <!-- КАРТИНКА ПРУЖИНЫ (ЦЕНТР, ПОСЕРЕДИНЕ) -->
         <div class="center-visual">
             <div class="visual-area">
                 <div class="main-zoom-hint" onclick="openMainDrawing()">
                     <span>🔍 НАЖМИТЕ ДЛЯ УВЕЛИЧЕНИЯ</span>
                 </div>
-                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing" onclick="openMainDrawing()" title="Нажмите, чтобы приблизить">
+                <img id="img-spring" src="img/springs/16-1-threaded.png" class="spring-drawing" onclick="openMainDrawing()" title="Нажмите, чтобы приблизить" alt="Чертеж пружины">
             </div>
         </div>
 
-        <!-- СТОРОНА B -->
+        <!-- СТОРОНА B (Шток) - ЛЕВАЯ КОЛОНКА -->
         <div class="side-a">
             <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-a">
                 <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')">
+                <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Наконечник стороны B">
                 <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
-        <!-- СТОРОНА A -->
+        <!-- СТОРОНА A (Трубка) - ПРАВАЯ КОЛОНКА -->
         <div class="side-b">
             <label>Сторона А (Трубка):</label>
             <div class="tip-box" id="box-b">
                 <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
-                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')">
+                <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Наконечник стороны A">
                 <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
-        <!-- РЕЗУЛЬТАТЫ -->
+        <!-- РЕЗУЛЬТАТЫ (ЦЕНТР, ВНИЗУ) -->
         <div class="center-results">
             <div class="result-panel">
                 <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
@@ -260,9 +399,10 @@
 
     </div>
 
-    <!-- ПОДВАЛ С ОДНОЙ КНОПКОЙ -->
+    <!-- ПОДВАЛ С КНОПКАМИ -->
     <div class="footer-buttons">
-        <button id="save-btn" class="btn-save" onclick="sendOrder()">СОХРАНИТЬ КОНФИГУРАЦИЮ</button>
+        <button id="save-btn" class="btn btn-save" onclick="saveConfiguration()">СКОПИРОВАТЬ АРТИКУЛ</button>
+        <button class="btn btn-reset" onclick="resetConfiguration()">СБРОСИТЬ</button>
     </div>
 </div>
 
@@ -270,17 +410,15 @@
 <div id="detailModal" class="modal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
         <h3 id="modal-title" style="margin-top: 0; color: #2c3e50;">Технический чертеж</h3>
-        <img id="modal-img" src="" class="detail-img">
+        <img id="modal-img" src="" class="detail-img" alt="Детальный чертеж">
         <div class="modal-btns">
-            <button class="btn-confirm" onclick="closeModal()">ОК</button>
+            <button class="btn-confirm" onclick="closeModal()">ЗАКРЫТЬ</button>
         </div>
     </div>
 </div>
 
 <script>
-    let tg = window.Telegram.WebApp;
-    tg.expand();
-
+    // Данные конфигуратора
     const springCatalog = {
         threaded: {
             "16-1": [{l:77.5, s:20, t:53.5, r:24}, {l:107, s:35, t:67, r:40}, {l:117.5, s:40, t:72.5, r:45}, {l:156.5, s:60, t:91.5, r:65}, {l:197, s:80, t:113, r:84}, {l:207, s:85, t:117, r:90}, {l:235, s:100, t:131, r:104}, {l:278, s:120, t:154, r:124}, {l:285, s:120, t:161, r:124}, {l:316, s:135, t:168, r:148}, {l:337.5, s:150, t:183.5, r:154}],
@@ -329,6 +467,11 @@
         "16-6": { min: 200, max: 2000, rod: 14, tube: 28, thread: "M8" }
     };
 
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUI();
+    });
+
     function updateUI() {
         const series = document.getElementById('series').value;
         const weldedOpt = document.getElementById('welded-opt');
@@ -336,15 +479,24 @@
 
         if (series === "16-6") {
             weldedOpt.disabled = true;
-            if (conn === "welded") { document.getElementById('connection').value = "threaded"; conn = "threaded"; }
-        } else { weldedOpt.disabled = false; }
+            if (conn === "welded") { 
+                document.getElementById('connection').value = "threaded"; 
+                conn = "threaded"; 
+            }
+        } else { 
+            weldedOpt.disabled = false; 
+        }
 
         const dimSel = document.getElementById('dimensions-select');
         dimSel.innerHTML = "";
         const data = springCatalog[conn][series];
-        data.forEach((p, idx) => {
-            dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
-        });
+        if (data && data.length > 0) {
+            data.forEach((p, idx) => {
+                dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
+            });
+        } else {
+            dimSel.add(new Option("Нет доступных размеров", "0"));
+        }
 
         const boxA = document.getElementById('box-a');
         const boxB = document.getElementById('box-b');
@@ -354,11 +506,13 @@
         if (conn === "welded") {
             boxA.classList.add('disabled');
             boxB.classList.add('disabled');
-            selA.disabled = true; selB.disabled = true;
+            selA.disabled = true; 
+            selB.disabled = true;
         } else {
             boxA.classList.remove('disabled');
             boxB.classList.remove('disabled');
-            selA.disabled = false; selB.disabled = false;
+            selA.disabled = false; 
+            selB.disabled = false;
             fillAttach('attach-a', series);
             fillAttach('attach-b', series);
         }
@@ -367,6 +521,7 @@
         const forceInp = document.getElementById('force');
         forceInp.min = lim.min;
         forceInp.max = lim.max;
+        forceInp.placeholder = lim.min + " - " + lim.max;
         document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
         
         updateTipImages();
@@ -395,21 +550,26 @@
             if (tipA) document.getElementById('img-a').src = tipA.img;
             if (tipB) document.getElementById('img-b').src = tipB.img;
         } else {
-            document.getElementById('img-a').src = "img/tips/none.png";
-            document.getElementById('img-b').src = "img/tips/none.png";
+            document.getElementById('img-a').src = "img/tips/welded-eye.png";
+            document.getElementById('img-b').src = "img/tips/welded-eye.png";
         }
     }
 
     function openDetail(side) {
         const conn = document.getElementById('connection').value;
-        if (conn === 'welded') return;
+        if (conn === 'welded') {
+            alert("Для сварного соединения нет детальных чертежей наконечников");
+            return;
+        }
         const selectId = side === 'a' ? 'attach-a' : 'attach-b';
         const val = document.getElementById(selectId).value.split('|')[0];
         const tip = attachments.find(a => a.id === val);
-        if (tip && tip.id !== 'none') {
+        if (tip && tip.id !== 'none' && tip.detail) {
             document.getElementById('modal-title').innerText = "Чертеж наконечника";
             document.getElementById('modal-img').src = tip.detail;
             document.getElementById('detailModal').style.display = 'flex';
+        } else {
+            alert("Для этого наконечника нет детального чертежа");
         }
     }
 
@@ -420,7 +580,9 @@
         document.getElementById('detailModal').style.display = 'flex';
     }
 
-    function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
+    function closeModal() { 
+        document.getElementById('detailModal').style.display = 'none'; 
+    }
 
     function validateForce() {
         const series = document.getElementById('series').value;
@@ -428,20 +590,29 @@
         const forceInp = document.getElementById('force');
         const saveBtn = document.getElementById('save-btn');
         const val = parseInt(forceInp.value);
+        
         if (val < lim.min || val > lim.max || isNaN(val)) {
             forceInp.classList.add('error');
             saveBtn.disabled = true;
+            return false;
         } else {
             forceInp.classList.remove('error');
             saveBtn.disabled = false;
+            return true;
         }
-        calculateTotal();
     }
 
     function calculateTotal() {
         const series = document.getElementById('series').value;
         const conn = document.getElementById('connection').value;
         const dimIdx = document.getElementById('dimensions-select').value;
+        
+        if (!springCatalog[conn] || !springCatalog[conn][series] || !springCatalog[conn][series][dimIdx]) {
+            document.getElementById('order-code').innerText = "Ошибка выбора";
+            document.getElementById('calc-result').innerText = "L1: -- мм";
+            return;
+        }
+        
         const p = springCatalog[conn][series][dimIdx];
         const force = document.getElementById('force').value || "???";
         if (!p) return;
@@ -454,7 +625,7 @@
             const sideB = document.getElementById('attach-b').value.split('|');
             let codeA = sideA[0] === "none" ? "AM" + seriesLimits[series].thread.replace('M','') : sideA[0].split('-')[0];
             let codeB = sideB[0] === "none" ? "BM" + seriesLimits[series].thread.replace('M','') : sideB[0].split('-')[1] || sideB[0].replace('A','B');
-            l1 += parseFloat(sideA[1]) + parseFloat(sideB[1]);
+            l1 += (parseFloat(sideA[1]) || 0) + (parseFloat(sideB[1]) || 0);
             code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
         } else {
             code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
@@ -465,13 +636,31 @@
         document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
     }
 
-    function sendOrder() {
+    function saveConfiguration() {
+        if (!validateForce()) {
+            alert("Пожалуйста, введите корректное значение усилия");
+            return;
+        }
+        
         const code = document.getElementById('order-code').innerText;
-        tg.sendData(JSON.stringify({ orderCode: code, totalL: document.getElementById('calc-result').innerText }));
-        tg.close();
+        
+        // Копируем артикул в буфер обмена
+        navigator.clipboard.writeText(code).then(function() {
+            alert("Артикул скопирован в буфер обмена:\n" + code);
+        }).catch(function() {
+            // Если не удалось скопировать, показываем сообщение
+            alert("Ваш артикул для заказа:\n" + code);
+        });
     }
 
-    updateUI();
+    function resetConfiguration() {
+        if (confirm("Сбросить все настройки?")) {
+            document.getElementById('series').value = "16-1";
+            document.getElementById('connection').value = "threaded";
+            document.getElementById('force').value = "";
+            updateUI();
+        }
+    }
 </script>
 </body>
 </html>
