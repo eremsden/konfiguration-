@@ -395,7 +395,7 @@
                 </div>
                 <div>
                     <label>4. Усилие (Н):</label>
-                    <input type="number" id="force" oninput="validateForce()" placeholder="250">
+                    <input type="number" id="force" oninput="validateForce()" placeholder="250" step="10">
                     <span id="force-limits" class="limit-hint">min --H - max --H</span>
                 </div>
             </div>
@@ -629,22 +629,28 @@
     }
 
     function validateForce() {
-    const series = document.getElementById('series').value;
-    const lim = seriesLimits[series];
-    const forceInp = document.getElementById('force');
-    const saveBtn = document.getElementById('save-btn');
-    const val = parseInt(forceInp.value);
+        const series = document.getElementById('series').value;
+        const lim = seriesLimits[series];
+        const forceInp = document.getElementById('force');
+        const saveBtn = document.getElementById('save-btn');
+        const val = parseInt(forceInp.value);
     
-    if (val < lim.min || val > lim.max || isNaN(val)) {
-        forceInp.classList.add('error');
-        saveBtn.disabled = true;
-    } else {
-        forceInp.classList.remove('error');
-        saveBtn.disabled = false;
-    }
+       // Проверка на кратность 10
+       if (val % 10 !== 0) {
+            forceInp.classList.add('error');
+            saveBtn.disabled = true;
+            document.getElementById('force-limits').innerText = `Значение должно быть кратно 10`;
+        } else if (val < lim.min || val > lim.max || isNaN(val)) {
+            forceInp.classList.add('error');
+            saveBtn.disabled = true;
+            document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
+        } else {
+            forceInp.classList.remove('error');
+            saveBtn.disabled = false;
+            document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
+        }
     
-    // Добавьте эту строку - она вызывает пересчет артикула
-    calculateTotal();
+        calculateTotal();
     }
 
     function calculateTotal() {
