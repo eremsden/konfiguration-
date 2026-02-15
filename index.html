@@ -480,6 +480,14 @@
 
     const attachments = [
         { id: "none", name: "Без наконечника", dist: 0, series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png", detail: "img/tips/none.png" },
+        { id: "thread-16-1", name: "Резьба M6(16-1)", dist: 0, series: ["16-1"], img: "img/tips/thread-16-1.png", detail: "img/tips/thread-16-1.png" },
+        { id: "thread-16-2", name: "Резьба M6(16-2)", dist: 0, series: ["16-2"], img: "img/tips/thread-16-2.png", detail: "img/tips/thread-16-2.png" },
+        { id: "thread-16-4", name: "Резьба M8(16-4)", dist: 0, series: ["16-4"], img: "img/tips/thread-16-4.png", detail: "img/tips/thread-16-4.png" },
+        { id: "thread-16-6", name: "Резьба M8(16-6)", dist: 0, series: ["16-6"], img: "img/tips/thread-16-6.png", detail: "img/tips/thread-16-6.png" },
+        { id: "thread-16-1-b", name: "Резьба M6(16-1)B", dist: 0, series: ["16-1"], img: "img/tips/thread-16-1-b.png", detail: "img/tips/thread-16-1-b.png" },
+        { id: "thread-16-2-b", name: "Резьба M6(16-2)B", dist: 0, series: ["16-2"], img: "img/tips/thread-16-2-b.png", detail: "img/tips/thread-16-2-b.png" },
+        { id: "thread-16-4-b", name: "Резьба M8(16-4)B", dist: 0, series: ["16-4"], img: "img/tips/thread-16-4-b.png", detail: "img/tips/thread-16-4-b.png" },
+        { id: "thread-16-6-b", name: "Резьба M8(16-6)B", dist: 0, series: ["16-6"], img: "img/tips/thread-16-6-b.png", detail: "img/tips/thread-16-6-b.png" },
         { id: "A246-B246", name: "Шарнир Пластик M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A246-B246.png", detail: "img/details/A246-detail.png" },
         { id: "A201-B201", name: "Шарнир Сталь M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A201-B201.png", detail: "img/details/A201-detail.png" },
         { id: "A207-B207", name: "Шарнир Сталь M8", dist: 19, series: ["16-4", "16-6"], img: "img/tips/A201-B201.png", detail: "img/details/A201-detail.png" },
@@ -654,39 +662,47 @@
     }
 
     function calculateTotal() {
-        const series = document.getElementById('series').value;
-        const conn = document.getElementById('connection').value;
-        const dimIdx = document.getElementById('dimensions-select').value;
-        
-        if (!springCatalog[conn] || !springCatalog[conn][series] || !springCatalog[conn][series][dimIdx]) {
-            document.getElementById('order-code').innerText = "Ошибка выбора";
-            document.getElementById('calc-result').innerText = "L1: -- мм";
-            return;
-        }
-        
-        const p = springCatalog[conn][series][dimIdx];
-        const force = document.getElementById('force').value || "???";
-        if (!p) return;
-
-        let code = "";
-        let l1 = p.l;
-
-        if (conn === "threaded") {
-            const sideA = document.getElementById('attach-a').value.split('|');
-            const sideB = document.getElementById('attach-b').value.split('|');
-            let codeA = sideA[0] === "none" ? "AM" + seriesLimits[series].thread.replace('M','') : sideA[0].split('-')[0];
-            let codeB = sideB[0] === "none" ? "BM" + seriesLimits[series].thread.replace('M','') : sideB[0].split('-')[1] || sideB[0].replace('A','B');
-            l1 += (parseFloat(sideA[1]) || 0) + (parseFloat(sideB[1]) || 0);
-            code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
-        } else {
-            code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
-            l1 = p.l;
-        }
-        document.getElementById('order-code').innerText = code;
-        document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
-        document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
+    const series = document.getElementById('series').value;
+    const conn = document.getElementById('connection').value;
+    const dimIdx = document.getElementById('dimensions-select').value;
+    
+    if (!springCatalog[conn] || !springCatalog[conn][series] || !springCatalog[conn][series][dimIdx]) {
+        document.getElementById('order-code').innerText = "Ошибка выбора";
+        document.getElementById('calc-result').innerText = "L1: -- мм";
+        return;
     }
+    
+    const p = springCatalog[conn][series][dimIdx];
+    const force = document.getElementById('force').value || "???";
+    if (!p) return;
 
+    let code = "";
+    let l1 = p.l;
+
+    if (conn === "threaded") {
+        const sideA = document.getElementById('attach-a').value.split('|');
+        const sideB = document.getElementById('attach-b').value.split('|');
+        
+        // НОВАЯ ЛОГИКА ДЛЯ СТОРОНЫ A
+        let codeA = (sideA[0] === "none" || sideA[0].startsWith("thread-")) 
+            ? "AM" + seriesLimits[series].thread.replace('M','') 
+            : sideA[0].split('-')[0];
+        
+        // НОВАЯ ЛОГИКА ДЛЯ СТОРОНЫ B
+        let codeB = (sideB[0] === "none" || sideB[0].startsWith("thread-")) 
+            ? "BM" + seriesLimits[series].thread.replace('M','') 
+            : sideB[0].split('-')[1] || sideB[0].replace('A','B');
+        
+        l1 += (parseFloat(sideA[1]) || 0) + (parseFloat(sideB[1]) || 0);
+        code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
+    } else {
+        code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
+        l1 = p.l;
+    }
+    document.getElementById('order-code').innerText = code;
+    document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
+    document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
+}
     function saveConfiguration() {
         if (!validateForce()) {
             alert("Пожалуйста, введите корректное значение усилия");
