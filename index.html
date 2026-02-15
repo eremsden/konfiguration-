@@ -629,21 +629,22 @@
     }
 
     function validateForce() {
-        const series = document.getElementById('series').value;
-        const lim = seriesLimits[series];
-        const forceInp = document.getElementById('force');
-        const saveBtn = document.getElementById('save-btn');
-        const val = parseInt(forceInp.value);
-        
-        if (val < lim.min || val > lim.max || isNaN(val)) {
-            forceInp.classList.add('error');
-            saveBtn.disabled = true;
-            return false;
-        } else {
-            forceInp.classList.remove('error');
-            saveBtn.disabled = false;
-            return true;
-        }
+    const series = document.getElementById('series').value;
+    const lim = seriesLimits[series];
+    const forceInp = document.getElementById('force');
+    const saveBtn = document.getElementById('save-btn');
+    const val = parseInt(forceInp.value);
+    
+    if (val < lim.min || val > lim.max || isNaN(val)) {
+        forceInp.classList.add('error');
+        saveBtn.disabled = true;
+    } else {
+        forceInp.classList.remove('error');
+        saveBtn.disabled = false;
+    }
+    
+    // Добавьте эту строку - она вызывает пересчет артикула
+    calculateTotal();
     }
 
     function calculateTotal() {
