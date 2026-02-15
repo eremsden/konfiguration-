@@ -479,38 +479,69 @@
     };
 
     const attachments = [
-        { id: "none", name: "Без наконечника", dist: 0, series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png", detail: "img/tips/none.png" },
-        { id: "thread-16-1", name: "Резьба M6(16-1)", dist: 0, series: ["16-1"], img: "img/tips/thread-16-1.png", detail: "img/tips/thread-16-1.png" },
-        { id: "thread-16-2", name: "Резьба M6(16-2)", dist: 0, series: ["16-2"], img: "img/tips/thread-16-2.png", detail: "img/tips/thread-16-2.png" },
-        { id: "thread-16-4", name: "Резьба M8(16-4)", dist: 0, series: ["16-4"], img: "img/tips/thread-16-4.png", detail: "img/tips/thread-16-4.png" },
-        { id: "thread-16-6", name: "Резьба M8(16-6)", dist: 0, series: ["16-6"], img: "img/tips/thread-16-6.png", detail: "img/tips/thread-16-6.png" },
-        { id: "thread-16-1-b", name: "Резьба M6(16-1)B", dist: 0, series: ["16-1"], img: "img/tips/thread-16-1-b.png", detail: "img/tips/thread-16-1-b.png" },
-        { id: "thread-16-2-b", name: "Резьба M6(16-2)B", dist: 0, series: ["16-2"], img: "img/tips/thread-16-2-b.png", detail: "img/tips/thread-16-2-b.png" },
-        { id: "thread-16-4-b", name: "Резьба M8(16-4)B", dist: 0, series: ["16-4"], img: "img/tips/thread-16-4-b.png", detail: "img/tips/thread-16-4-b.png" },
-        { id: "thread-16-6-b", name: "Резьба M8(16-6)B", dist: 0, series: ["16-6"], img: "img/tips/thread-16-6-b.png", detail: "img/tips/thread-16-6-b.png" },
-        { id: "A246-B246", name: "Шарнир Пластик M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A246-B246.png", detail: "img/details/A246-detail.png" },
-        { id: "A201-B201", name: "Шарнир Сталь M8", dist: 19, series: ["16-1", "16-2"], img: "img/tips/A201-B201.png", detail: "img/details/A201-detail.png" },
-        { id: "A207-B207", name: "Шарнир Сталь M8", dist: 19, series: ["16-4", "16-6"], img: "img/tips/A201-B201.png", detail: "img/details/A201-detail.png" },
-        { id: "A129-B129", name: "Шарнир Хром M8", dist: 30, series: ["16-4", "16-6"], img: "img/tips/A129-B129.png", detail: "img/details/A129-detail.png" },
-        { id: "A199-B199", name: "Шарнир Хром M10", dist: 30, series: ["16-4", "16-6"], img: "img/tips/A199-B199.png", detail: "img/details/A199-detail.png" },
-        { id: "A30-B30", name: "Проушина цинк Ø8.1", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A31-B31", name: "Проушина цинк Ø10.1", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A104-B104", name: "Проушина цинк Ø12", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A220-B220", name: "Проушина цинк Ø6.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A221-B221", name: "Проушина цинк Ø8.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A222-B222", name: "Проушина цинк Ø10.1", dist: 16, series: ["16-1", "16-2"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A26-B26", name: "Проушина цинк Ø12", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A26-B26.png", detail: "img/details/A26-detail.png" },
-        { id: "A1-B1", name: "Проушина цинк Ø6.1 (28)", dist: 28, series: ["16-1", "16-2"], img: "img/tips/A1-B1.png", detail: "img/details/A1-detail.png" },
-        { id: "A2-B2", name: "Проушина цинк Ø8.1 (28)", dist: 28, series: ["16-1", "16-2"], img: "img/tips/A1-B1.png", detail: "img/details/A1-detail.png" },
-        { id: "A13-B13", name: "Проушина цинк Ø8.1 (28)", dist: 28, series: ["16-4", "16-6"], img: "img/tips/A1-B1.png", detail: "img/details/A1-detail.png" },
-        { id: "A20-B20", name: "Проушина цинк Ø10.1 (22)", dist: 22, series: ["16-4", "16-6"], img: "img/tips/A20-B20.png", detail: "img/details/A20-detail.png" },
-        { id: "A10-B10", name: "Проушина цинк Ø8.1 (13)", dist: 13, series: ["16-1", "16-2"], img: "img/tips/A10-B10.png", detail: "img/details/A10-detail.png" },
-        { id: "A223-B223", name: "Проушина цинк Ø6.1 (13)", dist: 13, series: ["16-1", "16-2"], img: "img/tips/A10-B10.png", detail: "img/details/A10-detail.png" },
-        { id: "A111-B111", name: "Проушина цинк Ø8.1 (22)", dist: 22, series: ["16-4", "16-6"], img: "img/tips/A20-B20.png", detail: "img/details/A20-detail.png" },
-        { id: "A232-B232", name: "Вильчатая головка M6", dist: 24, series: ["16-1", "16-2"], img: "img/tips/A232-B232.png", detail: "img/details/A232-detail.png" },
-        { id: "A412-B412", name: "Проушина пластик", dist: 16, series: ["16-4", "16-6"], img: "img/tips/A412-B412.png", detail: "img/details/A412-detail.png" },
-        { id: "A21-B21", name: "Вильчатая головка M8", dist: 32, series: ["16-4", "16-6"], img: "img/tips/A21-B21.png", detail: "img/details/A21-detail.png" }
-    ];
+        // Для стороны B (Шток) - левая колонка
+    { id: "none-b", name: "Без наконечника (шток)", dist: 0, side: "b", series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png" },
+    { id: "thread-16-1-b", name: "Резьба M6(16-1) шток", dist: 0, side: "b", series: ["16-1"], img: "img/tips/thread-16-1-b.png" },
+    { id: "thread-16-2-b", name: "Резьба M6(16-2) шток", dist: 0, side: "b", series: ["16-2"], img: "img/tips/thread-16-2-b.png" },
+    { id: "thread-16-4-b", name: "Резьба M8(16-4) шток", dist: 0, side: "b", series: ["16-4"], img: "img/tips/thread-16-4-b.png" },
+    { id: "thread-16-6-b", name: "Резьба M8(16-6) шток", dist: 0, side: "b", series: ["16-6"], img: "img/tips/thread-16-6-b.png" },
+    
+    // Для стороны A (Трубка) - правая колонка
+    { id: "none-a", name: "Без наконечника (трубка)", dist: 0, side: "a", series: ["16-1", "16-2", "16-4", "16-6"], img: "img/tips/none.png" },
+    { id: "thread-16-1-a", name: "Резьба M6(16-1) трубка", dist: 0, side: "a", series: ["16-1"], img: "img/tips/thread-16-1-a.png" },
+    { id: "thread-16-2-a", name: "Резьба M6(16-2) трубка", dist: 0, side: "a", series: ["16-2"], img: "img/tips/thread-16-2-a.png" },
+    { id: "thread-16-4-a", name: "Резьба M8(16-4) трубка", dist: 0, side: "a", series: ["16-4"], img: "img/tips/thread-16-4-a.png" },
+    { id: "thread-16-6-a", name: "Резьба M8(16-6) трубка", dist: 0, side: "a", series: ["16-6"], img: "img/tips/thread-16-6-a.png" },
+    
+    // НАКОНЕЧНИКИ ДЛЯ ШТОКА (сторона B)
+    { id: "B246", name: "Шарнир Пластик M8 (шток)", dist: 19, side: "b", series: ["16-1", "16-2"], img: "img/tips/B246.png" },
+    { id: "B201", name: "Шарнир Сталь M8 (шток)", dist: 19, side: "b", series: ["16-1", "16-2"], img: "img/tips/B201.png" },
+    { id: "B207", name: "Шарнир Сталь M8 (шток)", dist: 19, side: "b", series: ["16-4", "16-6"], img: "img/tips/B207.png" },
+    { id: "B129", name: "Шарнир Хром M8 (шток)", dist: 30, side: "b", series: ["16-4", "16-6"], img: "img/tips/B129.png" },
+    { id: "B199", name: "Шарнир Хром M10 (шток)", dist: 30, side: "b", series: ["16-4", "16-6"], img: "img/tips/B199.png" },
+    { id: "B30", name: "Проушина цинк Ø8.1 (шток)", dist: 16, side: "b", series: ["16-4", "16-6"], img: "img/tips/B30.png" },
+    { id: "B31", name: "Проушина цинк Ø10.1 (шток)", dist: 16, side: "b", series: ["16-4", "16-6"], img: "img/tips/B31.png" },
+    { id: "B104", name: "Проушина цинк Ø12 (шток)", dist: 16, side: "b", series: ["16-1", "16-2"], img: "img/tips/B104.png" },
+    { id: "B220", name: "Проушина цинк Ø6.1 (шток)", dist: 16, side: "b", series: ["16-1", "16-2"], img: "img/tips/B220.png" },
+    { id: "B221", name: "Проушина цинк Ø8.1 (шток)", dist: 16, side: "b", series: ["16-1", "16-2"], img: "img/tips/B221.png" },
+    { id: "B222", name: "Проушина цинк Ø10.1 (шток)", dist: 16, side: "b", series: ["16-1", "16-2"], img: "img/tips/B222.png" },
+    { id: "B26", name: "Проушина цинк Ø12 (шток)", dist: 16, side: "b", series: ["16-4", "16-6"], img: "img/tips/B26.png" },
+    { id: "B1", name: "Проушина цинк Ø6.1 (28) (шток)", dist: 28, side: "b", series: ["16-1", "16-2"], img: "img/tips/B1.png" },
+    { id: "B2", name: "Проушина цинк Ø8.1 (28) (шток)", dist: 28, side: "b", series: ["16-1", "16-2"], img: "img/tips/B2.png" },
+    { id: "B13", name: "Проушина цинк Ø8.1 (28) (шток)", dist: 28, side: "b", series: ["16-4", "16-6"], img: "img/tips/B13.png" },
+    { id: "B20", name: "Проушина цинк Ø10.1 (22) (шток)", dist: 22, side: "b", series: ["16-4", "16-6"], img: "img/tips/B20.png" },
+    { id: "B10", name: "Проушина цинк Ø8.1 (13) (шток)", dist: 13, side: "b", series: ["16-1", "16-2"], img: "img/tips/B10.png" },
+    { id: "B223", name: "Проушина цинк Ø6.1 (13) (шток)", dist: 13, side: "b", series: ["16-1", "16-2"], img: "img/tips/B223.png" },
+    { id: "B111", name: "Проушина цинк Ø8.1 (22) (шток)", dist: 22, side: "b", series: ["16-4", "16-6"], img: "img/tips/B111.png" },
+    { id: "B232", name: "Вильчатая головка M6 (шток)", dist: 24, side: "b", series: ["16-1", "16-2"], img: "img/tips/B232.png" },
+    { id: "B412", name: "Проушина пластик (шток)", dist: 16, side: "b", series: ["16-4", "16-6"], img: "img/tips/B412.png" },
+    { id: "B21", name: "Вильчатая головка M8 (шток)", dist: 32, side: "b", series: ["16-4", "16-6"], img: "img/tips/B21.png" },
+    
+    // НАКОНЕЧНИКИ ДЛЯ ТРУБКИ (сторона A)
+    { id: "A246", name: "Шарнир Пластик M8 (трубка)", dist: 19, side: "a", series: ["16-1", "16-2"], img: "img/tips/A246.png" },
+    { id: "A201", name: "Шарнир Сталь M8 (трубка)", dist: 19, side: "a", series: ["16-1", "16-2"], img: "img/tips/A201.png" },
+    { id: "A207", name: "Шарнир Сталь M8 (трубка)", dist: 19, side: "a", series: ["16-4", "16-6"], img: "img/tips/A207.png" },
+    { id: "A129", name: "Шарнир Хром M8 (трубка)", dist: 30, side: "a", series: ["16-4", "16-6"], img: "img/tips/A129.png" },
+    { id: "A199", name: "Шарнир Хром M10 (трубка)", dist: 30, side: "a", series: ["16-4", "16-6"], img: "img/tips/A199.png" },
+    { id: "A30", name: "Проушина цинк Ø8.1 (трубка)", dist: 16, side: "a", series: ["16-4", "16-6"], img: "img/tips/A30.png" },
+    { id: "A31", name: "Проушина цинк Ø10.1 (трубка)", dist: 16, side: "a", series: ["16-4", "16-6"], img: "img/tips/A31.png" },
+    { id: "A104", name: "Проушина цинк Ø12 (трубка)", dist: 16, side: "a", series: ["16-1", "16-2"], img: "img/tips/A104.png" },
+    { id: "A220", name: "Проушина цинк Ø6.1 (трубка)", dist: 16, side: "a", series: ["16-1", "16-2"], img: "img/tips/A220.png" },
+    { id: "A221", name: "Проушина цинк Ø8.1 (трубка)", dist: 16, side: "a", series: ["16-1", "16-2"], img: "img/tips/A221.png" },
+    { id: "A222", name: "Проушина цинк Ø10.1 (трубка)", dist: 16, side: "a", series: ["16-1", "16-2"], img: "img/tips/A222.png" },
+    { id: "A26", name: "Проушина цинк Ø12 (трубка)", dist: 16, side: "a", series: ["16-4", "16-6"], img: "img/tips/A26.png" },
+    { id: "A1", name: "Проушина цинк Ø6.1 (28) (трубка)", dist: 28, side: "a", series: ["16-1", "16-2"], img: "img/tips/A1.png" },
+    { id: "A2", name: "Проушина цинк Ø8.1 (28) (трубка)", dist: 28, side: "a", series: ["16-1", "16-2"], img: "img/tips/A2.png" },
+    { id: "A13", name: "Проушина цинк Ø8.1 (28) (трубка)", dist: 28, side: "a", series: ["16-4", "16-6"], img: "img/tips/A13.png" },
+    { id: "A20", name: "Проушина цинк Ø10.1 (22) (трубка)", dist: 22, side: "a", series: ["16-4", "16-6"], img: "img/tips/A20.png" },
+    { id: "A10", name: "Проушина цинк Ø8.1 (13) (трубка)", dist: 13, side: "a", series: ["16-1", "16-2"], img: "img/tips/A10.png" },
+    { id: "A223", name: "Проушина цинк Ø6.1 (13) (трубка)", dist: 13, side: "a", series: ["16-1", "16-2"], img: "img/tips/A223.png" },
+    { id: "A111", name: "Проушина цинк Ø8.1 (22) (трубка)", dist: 22, side: "a", series: ["16-4", "16-6"], img: "img/tips/A111.png" },
+    { id: "A232", name: "Вильчатая головка M6 (трубка)", dist: 24, side: "a", series: ["16-1", "16-2"], img: "img/tips/A232.png" },
+    { id: "A412", name: "Проушина пластик (трубка)", dist: 16, side: "a", series: ["16-4", "16-6"], img: "img/tips/A412.png" },
+    { id: "A21", name: "Вильчатая головка M8 (трубка)", dist: 32, side: "a", series: ["16-4", "16-6"], img: "img/tips/A21.png" }
+];
+
 
     const seriesLimits = {
         "16-1": { min: 50, max: 400, rod: 6, tube: 15, thread: "M6" },
@@ -582,12 +613,16 @@
     }
 
     function fillAttach(id, series) {
-        const sel = document.getElementById(id);
-        sel.innerHTML = "";
-        attachments.filter(a => a.series.includes(series)).forEach(a => {
-            sel.add(new Option(`${a.name} (+${a.dist}мм)`, `${a.id || 'none'}|${a.dist}`));
-        });
-    }
+    const sel = document.getElementById(id);
+    sel.innerHTML = "";
+    
+    // Определяем, для какой стороны заполняем
+    const side = id === 'attach-a' ? 'b' : 'a'; // attach-a это сторона B (шток)
+    
+    attachments.filter(a => a.series.includes(series) && a.side === side).forEach(a => {
+        sel.add(new Option(`${a.name} (+${a.dist}мм)`, `${a.id}|${a.dist}`));
+    });
+}
 
     function updateTipImages() {
         const series = document.getElementById('series').value;
