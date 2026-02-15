@@ -16,7 +16,7 @@
         
         /* ЦВЕТА БРЕНДА */
         :root {
-            --brand-blue: #29abe2;
+            --brand-blue: #29abe2; /* Синий как на логотипе Дикон */
             --brand-dark: #2c3e50;
         }
 
@@ -43,7 +43,7 @@
             margin-bottom: 20px; 
         }
 
-        /* СЕТКА КОНФИГУРАТОРА - ТРИ КОЛОНКИ */
+        /* СЕТКА КОНФИГУРАТОРА */
         .config-grid {
             display: grid;
             grid-template-areas: 
@@ -81,7 +81,6 @@
             margin-bottom: 10px; 
         }
 
-        /* Стили для контейнера с подсказкой */
         .tip-box {
             border: 1px solid #e0e0e0;
             padding: 15px;
@@ -91,24 +90,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            margin-top: 30px; /* Опускаем блоки */
         }
-        
-        /* Для левой и правой колонок - дополнительный отступ для выравнивания с чертежом */
-        .side-a .tip-box {
-            margin-top: 50px;
-        }
-        
-        .side-b .tip-box {
-            margin-top: 50px;
-        }
-        
         .tip-box.disabled { 
             opacity: 0.4; 
             pointer-events: none; 
         }
-        
         .tip-img { 
             width: 140px; 
             height: 100px; 
@@ -118,11 +104,6 @@
             border-radius: 6px; 
             border: 1px solid #eee; 
             cursor: pointer; 
-            transition: transform 0.2s;
-        }
-        .tip-img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
         .zoom-hint { 
@@ -300,127 +281,6 @@
             cursor: pointer; 
         }
 
-        /* Стили для кастомного селекта с предпросмотром */
-        .custom-select-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-
-        .custom-select select {
-            display: none;
-        }
-
-        .select-selected {
-            background-color: #fff;
-            border: 1px solid #d1d8e0;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 15px;
-            position: relative;
-        }
-
-        .select-selected:after {
-            position: absolute;
-            content: "";
-            top: 18px;
-            right: 15px;
-            width: 0;
-            height: 0;
-            border: 6px solid transparent;
-            border-color: #7f8c8d transparent transparent transparent;
-        }
-
-        .select-selected.select-arrow-active:after {
-            border-color: transparent transparent #7f8c8d transparent;
-            top: 12px;
-        }
-
-        .select-items {
-            position: absolute;
-            background-color: #fff;
-            top: 100%;
-            left: 0;
-            right: 0;
-            z-index: 99;
-            border: 1px solid #d1d8e0;
-            border-radius: 8px;
-            margin-top: 5px;
-            max-height: 300px;
-            overflow-y: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .select-items div {
-            padding: 12px;
-            cursor: pointer;
-            user-select: none;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .select-items div:last-child {
-            border-bottom: none;
-        }
-
-        .select-items div:hover {
-            background-color: #f5f9ff;
-        }
-
-        .select-items div .option-preview {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            border-radius: 4px;
-            background: #f8f8f8;
-        }
-
-        .select-items div .option-text {
-            flex: 1;
-        }
-
-        .select-items div .tooltip-preview {
-            display: none;
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: 15px;
-            width: 150px;
-            height: 150px;
-            background: white;
-            border: 2px solid var(--brand-blue);
-            border-radius: 8px;
-            padding: 5px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        .select-items div:hover .tooltip-preview {
-            display: block;
-        }
-
-        .select-items div .tooltip-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .same-as-selected {
-            background-color: #e6f3ff;
-        }
-
         @media (max-width: 800px) {
             .config-grid {
                 grid-template-columns: 1fr;
@@ -439,7 +299,6 @@
             .tip-box { 
                 min-height: auto; 
                 padding: 10px; 
-                margin-top: 0 !important;
             }
             .tip-img { 
                 width: 120px; 
@@ -456,13 +315,6 @@
             .btn {
                 width: 100%;
             }
-            
-            .select-items div .tooltip-preview {
-                left: auto;
-                right: 100%;
-                margin-left: 0;
-                margin-right: 15px;
-            }
         }
     </style>
 </head>
@@ -474,7 +326,7 @@
     
     <div class="config-grid">
         
-        <!-- ПАРАМЕТРЫ (ЦЕНТР, ВВЕРХУ) -->
+        <!-- ПАРАМЕТРЫ -->
         <div class="center-params">
             <div class="params-row">
                 <div>
@@ -505,7 +357,7 @@
             </div>
         </div>
 
-        <!-- КАРТИНКА ПРУЖИНЫ (ЦЕНТР, ПОСЕРЕДИНЕ) -->
+        <!-- КАРТИНКА ПРУЖИНЫ (С ЗУМОМ) -->
         <div class="center-visual">
             <div class="visual-area">
                 <div class="main-zoom-hint" onclick="openMainDrawing()">
@@ -515,31 +367,27 @@
             </div>
         </div>
 
-        <!-- СТОРОНА B (Шток) - ЛЕВАЯ КОЛОНКА -->
+        <!-- СТОРОНА B (Шток) -->
         <div class="side-a">
             <label>Сторона B (Шток):</label>
             <div class="tip-box" id="box-a">
                 <div class="zoom-hint" onclick="openDetail('a')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-a" src="img/tips/none.png" class="tip-img" onclick="openDetail('a')" alt="Наконечник стороны B">
-                <div class="custom-select-wrapper" id="select-wrapper-a">
-                    <div class="custom-select" id="custom-select-a"></div>
-                </div>
+                <select id="attach-a" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
-        <!-- СТОРОНА A (Трубка) - ПРАВАЯ КОЛОНКА -->
+        <!-- СТОРОНА A (Трубка) -->
         <div class="side-b">
             <label>Сторона А (Трубка):</label>
             <div class="tip-box" id="box-b">
                 <div class="zoom-hint" onclick="openDetail('b')">🔍 ПОКАЗАТЬ ЧЕРТЕЖ</div>
                 <img id="img-b" src="img/tips/none.png" class="tip-img" onclick="openDetail('b')" alt="Наконечник стороны A">
-                <div class="custom-select-wrapper" id="select-wrapper-b">
-                    <div class="custom-select" id="custom-select-b"></div>
-                </div>
+                <select id="attach-b" onchange="updateTipImages(); calculateTotal();"></select>
             </div>
         </div>
 
-        <!-- РЕЗУЛЬТАТЫ (ЦЕНТР, ВНИЗУ) -->
+        <!-- РЕЗУЛЬТАТЫ -->
         <div class="center-results">
             <div class="result-panel">
                 <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
@@ -652,21 +500,21 @@
 
         const boxA = document.getElementById('box-a');
         const boxB = document.getElementById('box-b');
-        const wrapperA = document.getElementById('select-wrapper-a');
-        const wrapperB = document.getElementById('select-wrapper-b');
+        const selA = document.getElementById('attach-a');
+        const selB = document.getElementById('attach-b');
 
         if (conn === "welded") {
             boxA.classList.add('disabled');
             boxB.classList.add('disabled');
-            wrapperA.style.display = 'none';
-            wrapperB.style.display = 'none';
+            selA.disabled = true; 
+            selB.disabled = true;
         } else {
             boxA.classList.remove('disabled');
             boxB.classList.remove('disabled');
-            wrapperA.style.display = 'block';
-            wrapperB.style.display = 'block';
-            createCustomSelect('attach-a', series, 'a');
-            createCustomSelect('attach-b', series, 'b');
+            selA.disabled = false; 
+            selB.disabled = false;
+            fillAttach('attach-a', series);
+            fillAttach('attach-b', series);
         }
 
         const lim = seriesLimits[series];
@@ -681,98 +529,12 @@
         calculateTotal();
     }
 
-    function createCustomSelect(selectId, series, side) {
-        const select = document.getElementById(selectId);
-        const customSelectDiv = document.getElementById(`custom-select-${side}`);
-        
-        // Очищаем кастомный селект
-        customSelectDiv.innerHTML = '';
-        
-        // Получаем отфильтрованные attachment'ы
-        const filteredAttachments = attachments.filter(a => a.series.includes(series));
-        
-        // Создаем кастомный селект
-        const customSelect = document.createElement('div');
-        customSelect.className = 'custom-select';
-        
-        // Создаем выбранный элемент
-        const selectedDiv = document.createElement('div');
-        selectedDiv.className = 'select-selected';
-        selectedDiv.innerHTML = 'Выберите наконечник';
-        customSelect.appendChild(selectedDiv);
-        
-        // Создаем выпадающий список
-        const itemsDiv = document.createElement('div');
-        itemsDiv.className = 'select-items';
-        
-        filteredAttachments.forEach(attachment => {
-            const optionDiv = document.createElement('div');
-            optionDiv.setAttribute('data-value', `${attachment.id}|${attachment.dist}`);
-            
-            // Создаем превью изображение
-            const previewImg = document.createElement('img');
-            previewImg.className = 'option-preview';
-            previewImg.src = attachment.img;
-            previewImg.alt = attachment.name;
-            
-            // Текст опции
-            const textSpan = document.createElement('span');
-            textSpan.className = 'option-text';
-            textSpan.textContent = `${attachment.name} (+${attachment.dist}мм)`;
-            
-            // Туллип с увеличенным изображением
-            const tooltipDiv = document.createElement('div');
-            tooltipDiv.className = 'tooltip-preview';
-            const tooltipImg = document.createElement('img');
-            tooltipImg.src = attachment.detail || attachment.img;
-            tooltipImg.alt = attachment.name;
-            tooltipDiv.appendChild(tooltipImg);
-            
-            optionDiv.appendChild(previewImg);
-            optionDiv.appendChild(textSpan);
-            optionDiv.appendChild(tooltipDiv);
-            
-            optionDiv.onclick = function(e) {
-                e.stopPropagation();
-                select.value = this.getAttribute('data-value');
-                selectedDiv.innerHTML = this.querySelector('.option-text').textContent;
-                closeAllSelect(this);
-                updateTipImages();
-                calculateTotal();
-            };
-            
-            itemsDiv.appendChild(optionDiv);
+    function fillAttach(id, series) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = "";
+        attachments.filter(a => a.series.includes(series)).forEach(a => {
+            sel.add(new Option(`${a.name} (+${a.dist}мм)`, `${a.id || 'none'}|${a.dist}`));
         });
-        
-        customSelect.appendChild(itemsDiv);
-        customSelectDiv.appendChild(customSelect);
-        
-        // Закрываем селект при клике вне его
-        document.addEventListener('click', function(e) {
-            if (!customSelectDiv.contains(e.target)) {
-                closeAllSelect();
-            }
-        });
-        
-        // Открываем/закрываем при клике на выбранный элемент
-        selectedDiv.onclick = function(e) {
-            e.stopPropagation();
-            closeAllSelect(this);
-            this.classList.toggle('select-arrow-active');
-            itemsDiv.style.display = itemsDiv.style.display === 'block' ? 'none' : 'block';
-        };
-        
-        // Скрываем все селекты кроме текущего
-        function closeAllSelect(elmnt) {
-            const items = document.querySelectorAll('.select-items');
-            items.forEach(item => {
-                item.style.display = 'none';
-            });
-            const selected = document.querySelectorAll('.select-selected');
-            selected.forEach(sel => {
-                sel.classList.remove('select-arrow-active');
-            });
-        }
     }
 
     function updateTipImages() {
@@ -785,12 +547,8 @@
             const valB = document.getElementById('attach-b').value.split('|')[0];
             const tipA = attachments.find(a => a.id === valA);
             const tipB = attachments.find(a => a.id === valB);
-            if (tipA) {
-                document.getElementById('img-a').src = tipA.img;
-            }
-            if (tipB) {
-                document.getElementById('img-b').src = tipB.img;
-            }
+            if (tipA) document.getElementById('img-a').src = tipA.img;
+            if (tipB) document.getElementById('img-b').src = tipB.img;
         } else {
             document.getElementById('img-a').src = "img/tips/welded-eye.png";
             document.getElementById('img-b').src = "img/tips/welded-eye.png";
