@@ -316,6 +316,50 @@
                 width: 100%;
             }
         }
+        /* Двигаем только текст (label) */
+        .side-a > label {
+            margin-top: 125px;     /* Отступ сверху для текста */
+            margin-bottom: -100px;   /* Расстояние от текста до блока */
+            position: relative;
+            /* top: 0; */         /* Можно использовать для точной настройки */
+        }
+
+        .side-b > label {
+            margin-top: 125px;     /* Отступ сверху для текста */
+            margin-bottom: -1px;   /* Расстояние от текста до блока */
+            position: relative;
+        }
+
+        /* Двигаем только блок (tip-box) - независимо от текста */
+        .side-a .tip-box {
+            margin-top: 0;        /* Убираем отступ сверху у блока */
+            margin-bottom: 0;
+            position: relative;
+            top: 118px;            /* Сдвигаем блок относительно его нормальной позиции */
+            /* top: 20px;  - опустить блок */
+            /* top: -10px; - поднять блок */
+        }
+
+        .side-b .tip-box {
+            margin-top: 0;
+            margin-bottom: 0;
+            position: relative;
+            top: 20px;            /* Сдвигаем блок относительно его нормальной позиции */
+        }
+
+        /* Для мобильных - всё по умолчанию */
+        @media (max-width: 800px) {
+            .side-a > label,
+            .side-b > label {
+                margin-top: 0;
+                margin-bottom: 5px;
+            }
+            
+            .side-a .tip-box,
+            .side-b .tip-box {
+                top: 0;
+            }
+        }
     </style>
 </head>
 <body>
