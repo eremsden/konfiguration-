@@ -398,8 +398,7 @@
             <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-series"></td>
         </tr>
         <tr>
-            <!-- ТУТ ПОМЕНЯЛИ L на l -->
-            <td style="padding: 10px; border: 1px solid #ddd;">Размеры (l / Ход)</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Размеры (L / Ход)</td>
             <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-dims"></td>
         </tr>
         <tr>
@@ -407,8 +406,7 @@
             <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-force"></td>
         </tr>
         <tr>
-            <!-- ТУТ ПОМЕНЯЛИ L1 на L -->
-            <td style="padding: 10px; border: 1px solid #ddd;">Межцентровое расстояние (L)</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">Межцентровое расстояние (L1)</td>
             <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-l1"></td>
         </tr>
         <tr>
@@ -425,23 +423,26 @@
         </div>
     </div>
 
+    <!-- ДЕТАЛИЗАЦИЯ НАКОНЕЧНИКОВ (ПОМЕНЯЛИ МЕСТАМИ) -->
     <div style="display: flex; gap: 20px;">
         
-        <!-- ЛЕВАЯ КОЛОНКА: СТОРОНА B (ШТОК) -->
+        <!-- ЛЕВАЯ КОЛОНКА: ТЕПЕРЬ ЭТО ШТОК (Сторона B) -->
         <div style="width: 50%;">
-            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Чертеж Стороны B (Шток)</h4>
-            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <img id="pdf-img-rod" src="" style="max-width: 100%; max-height: 150px; object-fit: contain;">
-                <p id="pdf-name-rod" style="font-size: 12px; margin: 10px 0 0; font-weight: bold;"></p>
+            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Сторона B (Шток)</h4>
+            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px;">
+                <!-- ID изменены на rod -->
+                <img id="pdf-img-rod" src="" style="max-height: 100px; object-fit: contain;">
+                <p id="pdf-name-rod" style="font-size: 12px; margin: 5px 0 0;"></p>
             </div>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: СТОРОНА A (ТРУБКА) -->
+        <!-- ПРАВАЯ КОЛОНКА: ТЕПЕРЬ ЭТО ТРУБКА (Сторона А) -->
         <div style="width: 50%;">
-            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Чертеж Стороны А (Трубка)</h4>
-            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <img id="pdf-img-tube" src="" style="max-width: 100%; max-height: 150px; object-fit: contain;">
-                <p id="pdf-name-tube" style="font-size: 12px; margin: 10px 0 0; font-weight: bold;"></p>
+            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Сторона А (Трубка)</h4>
+            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px;">
+                <!-- ID изменены на tube -->
+                <img id="pdf-img-tube" src="" style="max-height: 100px; object-fit: contain;">
+                <p id="pdf-name-tube" style="font-size: 12px; margin: 5px 0 0;"></p>
             </div>
         </div>
 
@@ -523,7 +524,7 @@
         <!-- РЕЗУЛЬТАТЫ -->
         <div class="center-results">
             <div class="result-panel">
-                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L: -- мм</div>
+                <div id="calc-result" style="font-size: 18px; font-weight: bold; text-align: center; color: #2d3748;">L1: -- мм</div>
                 <div id="spec-info" style="font-size: 12px; color: #718096; text-align: center;"></div>
                 <label style="text-align: center; margin-top: 10px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</label>
                 <div id="order-code" class="order-code-value">---</div>
@@ -669,7 +670,7 @@
         const data = springCatalog[conn][series];
         if (data && data.length > 0) {
             data.forEach((p, idx) => {
-                dimSel.add(new Option(`l: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
+                dimSel.add(new Option(`L: ${p.l} мм(+-2мм) / Ход: ${p.s} мм`, idx));
             });
         } else {
             dimSel.add(new Option("Нет доступных размеров", "0"));
@@ -812,7 +813,7 @@
     
     if (!springCatalog[conn] || !springCatalog[conn][series] || !springCatalog[conn][series][dimIdx]) {
         document.getElementById('order-code').innerText = "Ошибка выбора";
-        document.getElementById('calc-result').innerText = "L: -- мм";
+        document.getElementById('calc-result').innerText = "L1: -- мм";
         return;
     }
     
@@ -844,7 +845,7 @@
         l1 = p.l;
     }
     document.getElementById('order-code').innerText = code;
-    document.getElementById('calc-result').innerText = `L (между осями): ${l1.toFixed(1)} мм`;
+    document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
     document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
 }
     function validateForce() {
@@ -944,78 +945,62 @@ function saveConfiguration() {
 }
 
 async function downloadPDF() {
+    // 1. Проверяем валидность
     if (!validateForce()) {
         alert("Пожалуйста, введите корректное усилие перед скачиванием PDF.");
         return;
     }
 
-    // Собираем данные
+    // 2. Собираем данные
     const article = document.getElementById('order-code').innerText;
     const series = document.getElementById('series').value;
     const dimsSelect = document.getElementById('dimensions-select');
     const dimsText = dimsSelect.options[dimsSelect.selectedIndex].text;
     const force = document.getElementById('force').value + " N";
-    const l_total = document.getElementById('calc-result').innerText.replace("L (между осями): ", "").replace(" мм", ""); // Достаем только число
+    const l1 = document.getElementById('calc-result').innerText;
     const connType = document.getElementById('connection').value === 'threaded' ? 'Резьбовое' : 'Сварное';
     
-    let nameRod = "Сварное соединение";
-    let nameTube = "Сварное соединение";
-    
-    // Переменные для путей к ЧЕРТЕЖАМ (details)
-    let srcDetailRod = "";
-    let srcDetailTube = "";
-
-    // Основное изображение пружины
-    document.getElementById('pdf-main-img').src = document.getElementById('img-spring').src;
+    // Получаем названия наконечников
+    let nameRod = "Сварная проушина"; // Сторона B (Шток)
+    let nameTube = "Сварная проушина"; // Сторона А (Трубка)
 
     if (document.getElementById('connection').value === 'threaded') {
-        // Получаем ID выбранных наконечников
-        // attach-a -> это Шток (Side B)
-        // attach-b -> это Трубка (Side A)
-        const valRod = document.getElementById('attach-a').value.split('|')[0];
-        const valTube = document.getElementById('attach-b').value.split('|')[0];
+        // ВАЖНО: В вашем HTML attach-a это Шток (Side B), attach-b это Трубка (Side A)
+        const selRod = document.getElementById('attach-a'); 
+        const selTube = document.getElementById('attach-b');
         
-        // Ищем объекты в каталоге
-        const tipRod = attachments.find(a => a.id === valRod);
-        const tipTube = attachments.find(a => a.id === valTube);
-
-        // Названия
-        nameRod = tipRod ? tipRod.name : "";
-        nameTube = tipTube ? tipTube.name : "";
-
-        // Пути к чертежам (detail), если их нет - берем обычную картинку (img)
-        srcDetailRod = (tipRod && tipRod.detail) ? tipRod.detail : (tipRod ? tipRod.img : "");
-        srcDetailTube = (tipTube && tipTube.detail) ? tipTube.detail : (tipTube ? tipTube.img : "");
-
-    } else {
-        // Для сварного берем то, что сейчас на экране (обычно welded-eye.png)
-        srcDetailRod = document.getElementById('img-a').src;
-        srcDetailTube = document.getElementById('img-b').src;
+        nameRod = selRod.options[selRod.selectedIndex].text;
+        nameTube = selTube.options[selTube.selectedIndex].text;
     }
 
-    // Заполняем шаблон данными
+    // 3. Заполняем шаблон
     document.getElementById('pdf-date').innerText = new Date().toLocaleDateString();
     document.getElementById('pdf-article').innerText = article;
     document.getElementById('pdf-series').innerText = series;
     document.getElementById('pdf-dims').innerText = dimsText;
     document.getElementById('pdf-force').innerText = force;
-    document.getElementById('pdf-l1').innerText = l_total + " мм";
+    document.getElementById('pdf-l1').innerText = l1;
     document.getElementById('pdf-conn').innerText = connType;
 
-    // Заполняем чертежи наконечников
-    // Левая колонка (Шток / Сторона B)
+    // --- ЗАПОЛНЯЕМ КОЛОНКИ (ТЕПЕРЬ ПРАВИЛЬНЫЙ ПОРЯДОК) ---
+    
+    // Левая колонка PDF (Шток) -> Берем данные из 'a' (ваша сторона B)
     document.getElementById('pdf-name-rod').innerText = nameRod;
-    document.getElementById('pdf-img-rod').src = srcDetailRod;
+    document.getElementById('pdf-img-rod').src = document.getElementById('img-a').src;
 
-    // Правая колонка (Трубка / Сторона A)
+    // Правая колонка PDF (Трубка) -> Берем данные из 'b' (ваша сторона A)
     document.getElementById('pdf-name-tube').innerText = nameTube;
-    document.getElementById('pdf-img-tube').src = srcDetailTube;
+    document.getElementById('pdf-img-tube').src = document.getElementById('img-b').src;
+    
+    // Основная картинка
+    document.getElementById('pdf-main-img').src = document.getElementById('img-spring').src;
 
-    // Генерируем PDF
+
+    // 4. Генерируем PDF
     const { jsPDF } = window.jspdf;
     const element = document.getElementById('pdf-template');
     
-    const btn = event.target;
+    const btn = event.target; // Кнопка, на которую нажали
     const oldText = btn.innerText;
     btn.innerText = "ГЕНЕРАЦИЯ...";
     btn.disabled = true;
