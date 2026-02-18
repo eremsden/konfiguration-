@@ -1,6 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- Библиотеки для генерации PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конфигуратор Дикон - Газовые пружины</title>
@@ -363,6 +368,91 @@
     </style>
 </head>
 <body>
+<!-- СКРЫТЫЙ ШАБЛОН ДЛЯ PDF -->
+<div id="pdf-template" style="position: absolute; left: -9999px; top: 0; width: 790px; background: white; padding: 40px; font-family: sans-serif; color: #333;">
+    <!-- Заголовок -->
+    <div style="border-bottom: 3px solid #29abe2; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="margin: 0; font-size: 24px; color: #2c3e50;">Техническая спецификация</h1>
+            <p style="margin: 5px 0 0; color: #7f8c8d; font-size: 14px;">Конфигуратор газовых пружин Дикон</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 12px; color: #999;">Дата: <span id="pdf-date"></span></div>
+        </div>
+    </div>
+
+    <!-- Основной Артикул -->
+    <div style="background: #f0f7fa; border: 1px solid #29abe2; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 30px;">
+        <div style="font-size: 14px; color: #555; margin-bottom: 5px;">АРТИКУЛ ДЛЯ ЗАКАЗА:</div>
+        <div id="pdf-article" style="font-size: 28px; font-weight: bold; color: #29abe2; font-family: monospace;">---</div>
+    </div>
+
+    <!-- Таблица характеристик -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tr style="background: #eee;">
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Параметр</th>
+            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Значение</th>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Серия</td>
+            <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-series"></td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Размеры (L / Ход)</td>
+            <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-dims"></td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Усилие (F1)</td>
+            <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-force"></td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Межцентровое расстояние (L1)</td>
+            <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-l1"></td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">Тип соединения</td>
+            <td style="padding: 10px; border: 1px solid #ddd;" id="pdf-conn"></td>
+        </tr>
+    </table>
+
+    <!-- Чертежи -->
+    <div style="margin-bottom: 30px;">
+        <h3 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Схема пружины</h3>
+        <div style="text-align: center; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+            <img id="pdf-main-img" src="" style="max-width: 100%; max-height: 200px;">
+        </div>
+    </div>
+
+    <!-- ДЕТАЛИЗАЦИЯ НАКОНЕЧНИКОВ (ПОМЕНЯЛИ МЕСТАМИ) -->
+    <div style="display: flex; gap: 20px;">
+        
+        <!-- ЛЕВАЯ КОЛОНКА: ТЕПЕРЬ ЭТО ШТОК (Сторона B) -->
+        <div style="width: 50%;">
+            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Сторона B (Шток)</h4>
+            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px;">
+                <!-- ID изменены на rod -->
+                <img id="pdf-img-rod" src="" style="max-height: 100px; object-fit: contain;">
+                <p id="pdf-name-rod" style="font-size: 12px; margin: 5px 0 0;"></p>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: ТЕПЕРЬ ЭТО ТРУБКА (Сторона А) -->
+        <div style="width: 50%;">
+            <h4 style="margin-top: 0; font-size: 14px; color: #555;">Сторона А (Трубка)</h4>
+            <div style="border: 1px solid #eee; padding: 10px; text-align: center; border-radius: 8px;">
+                <!-- ID изменены на tube -->
+                <img id="pdf-img-tube" src="" style="max-height: 100px; object-fit: contain;">
+                <p id="pdf-name-tube" style="font-size: 12px; margin: 5px 0 0;"></p>
+            </div>
+        </div>
+
+    </div>
+    
+    <div style="margin-top: 40px; font-size: 10px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 10px;">
+        Сформировано автоматически на сайте dikon.ru
+    </div>
+</div>
+
 
 <div class="card">
     <h2>Конфигуратор газовых пружин Дикон</h2>
@@ -443,11 +533,40 @@
 
     </div>
 
-    <!-- ПОДВАЛ С КНОПКАМИ -->
-    <div class="footer-buttons">
-        <button id="save-btn" class="btn btn-save" onclick="saveConfiguration()">СКОПИРОВАТЬ АРТИКУЛ</button>
-        <button class="btn btn-reset" onclick="resetConfiguration()">СБРОСИТЬ</button>
+            <!-- ПОДВАЛ + ФОРМА miniShop2 -->
+    <form id="ms2ConfigForm"
+          class="ms2_form"
+          method="post"
+          action="https://dikon.ru/catalog/gazovye-pruzhiny-amortizatory-dempfery/liftline/konfigurator/"        
+          target="_top"
+          onsubmit="return addToCart()">
+
+        <!-- служебные поля miniShop2 -->
+        <input type="hidden" name="ms2_action" value="cart/add">
+        <input type="hidden" name="id" value="3297"><!-- ЗДЕСЬ: подставьте ID товара -->
+        <input type="hidden" name="count" value="1">
+
+        <!-- сюда положим артикул и параметры как опции товара -->
+        <input type="hidden" name="options[article]" id="cfg_article">
+        
+
+            <div class="footer-buttons">
+        <!-- добавить в корзину -->
+        <button id="save-btn"
+                class="btn btn-save"
+                type="submit">
+            ДОБАВИТЬ В КОРЗИНУ
+        </button>
+        
+        <button type="button" class="btn btn-reset" onclick="downloadPDF()">
+            СКАЧАТЬ PDF
+        </button>
+        <!-- перейти в корзину -->
+        <a href="/cart/" target="_top" class="btn btn-save">
+            ПЕРЕЙТИ В КОРЗИНУ
+        </a>
     </div>
+</form>
 </div>
 
 <!-- МОДАЛКА ЧЕРТЕЖЕЙ -->
@@ -729,22 +848,61 @@
     document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
     document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
 }
-    function saveConfiguration() {
-        if (!validateForce()) {
-            alert("Пожалуйста, введите корректное значение усилия");
-            return;
-        }
-        
-        const code = document.getElementById('order-code').innerText;
-        
-        // Копируем артикул в буфер обмена
-        navigator.clipboard.writeText(code).then(function() {
-            alert("Артикул скопирован в буфер обмена:\n" + code);
-        }).catch(function() {
-            // Если не удалось скопировать, показываем сообщение
-            alert("Ваш артикул для заказа:\n" + code);
-        });
+    function validateForce() {
+    const series = document.getElementById('series').value;
+    const lim = seriesLimits[series];
+    const forceInp = document.getElementById('force');
+    const saveBtn = document.getElementById('save-btn');
+    
+    // Убираем лишние пробелы и парсим число
+    const val = parseInt(forceInp.value.trim(), 10);
+
+    let valid = true;
+
+    // Проверка на число и кратность 10
+    if (isNaN(val) || val % 10 !== 0) {
+        valid = false;
+        forceInp.classList.add('error');
+        saveBtn.disabled = true;
+        document.getElementById('force-limits').innerText = `Значение должно быть кратно 10`;
     }
+    // Проверка на пределы серии
+    else if (val < lim.min || val > lim.max) {
+        valid = false;
+        forceInp.classList.add('error');
+        saveBtn.disabled = true;
+        document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
+    } 
+    else {
+        forceInp.classList.remove('error');
+        saveBtn.disabled = false;
+        document.getElementById('force-limits').innerText = `min ${lim.min}H — max ${lim.max}H`;
+    }
+
+    // Пересчет артикула и длины
+    calculateTotal();
+
+    return valid; // ✅ Возвращаем результат проверки
+}
+
+function saveConfiguration() {
+    // Проверяем корректность силы перед копированием
+    if (!validateForce()) {
+        alert("Пожалуйста, введите корректное значение усилия");
+        return;
+    }
+    
+    const code = document.getElementById('order-code').innerText;
+
+    // Копируем артикул в буфер обмена
+    navigator.clipboard.writeText(code).then(function() {
+        alert("Артикул скопирован в буфер обмена:\n" + code);
+    }).catch(function() {
+        // Если не удалось скопировать, показываем сообщение
+        alert("Ваш артикул для заказа:\n" + code);
+    });
+}
+
 
     function resetConfiguration() {
         if (confirm("Сбросить все настройки?")) {
@@ -754,6 +912,121 @@
             updateUI();
         }
     }
+
+    function addToCart() {
+    // проверяем усилие
+    if (!validateForce()) {
+        alert("Пожалуйста, введите корректное значение усилия");
+        return false;
+    }
+
+    // пересчёт артикула
+    calculateTotal();
+
+    const series = document.getElementById('series').value;
+    const conn   = document.getElementById('connection').value;
+    const dimIdx = document.getElementById('dimensions-select').value;
+    const force  = document.getElementById('force').value.trim();
+
+    const p = springCatalog[conn][series][dimIdx];
+
+    // готовый артикул берём из блока результата
+    const code = document.getElementById('order-code').innerText;
+
+    // записываем артикул в скрытое поле для miniShop2
+    document.getElementById('cfg_article').value = code;
+
+    // показываем сообщение пользователю
+    alert("Пружина добавлена в корзину");
+
+    // отправляем форму (miniShop2 добавит товар в корзину,
+    // страница /konfigurator/ просто перезагрузится)
+    return true;
+}
+
+async function downloadPDF() {
+    // 1. Проверяем валидность
+    if (!validateForce()) {
+        alert("Пожалуйста, введите корректное усилие перед скачиванием PDF.");
+        return;
+    }
+
+    // 2. Собираем данные
+    const article = document.getElementById('order-code').innerText;
+    const series = document.getElementById('series').value;
+    const dimsSelect = document.getElementById('dimensions-select');
+    const dimsText = dimsSelect.options[dimsSelect.selectedIndex].text;
+    const force = document.getElementById('force').value + " N";
+    const l1 = document.getElementById('calc-result').innerText;
+    const connType = document.getElementById('connection').value === 'threaded' ? 'Резьбовое' : 'Сварное';
+    
+    // Получаем названия наконечников
+    let nameRod = "Сварная проушина"; // Сторона B (Шток)
+    let nameTube = "Сварная проушина"; // Сторона А (Трубка)
+
+    if (document.getElementById('connection').value === 'threaded') {
+        // ВАЖНО: В вашем HTML attach-a это Шток (Side B), attach-b это Трубка (Side A)
+        const selRod = document.getElementById('attach-a'); 
+        const selTube = document.getElementById('attach-b');
+        
+        nameRod = selRod.options[selRod.selectedIndex].text;
+        nameTube = selTube.options[selTube.selectedIndex].text;
+    }
+
+    // 3. Заполняем шаблон
+    document.getElementById('pdf-date').innerText = new Date().toLocaleDateString();
+    document.getElementById('pdf-article').innerText = article;
+    document.getElementById('pdf-series').innerText = series;
+    document.getElementById('pdf-dims').innerText = dimsText;
+    document.getElementById('pdf-force').innerText = force;
+    document.getElementById('pdf-l1').innerText = l1;
+    document.getElementById('pdf-conn').innerText = connType;
+
+    // --- ЗАПОЛНЯЕМ КОЛОНКИ (ТЕПЕРЬ ПРАВИЛЬНЫЙ ПОРЯДОК) ---
+    
+    // Левая колонка PDF (Шток) -> Берем данные из 'a' (ваша сторона B)
+    document.getElementById('pdf-name-rod').innerText = nameRod;
+    document.getElementById('pdf-img-rod').src = document.getElementById('img-a').src;
+
+    // Правая колонка PDF (Трубка) -> Берем данные из 'b' (ваша сторона A)
+    document.getElementById('pdf-name-tube').innerText = nameTube;
+    document.getElementById('pdf-img-tube').src = document.getElementById('img-b').src;
+    
+    // Основная картинка
+    document.getElementById('pdf-main-img').src = document.getElementById('img-spring').src;
+
+
+    // 4. Генерируем PDF
+    const { jsPDF } = window.jspdf;
+    const element = document.getElementById('pdf-template');
+    
+    const btn = event.target; // Кнопка, на которую нажали
+    const oldText = btn.innerText;
+    btn.innerText = "ГЕНЕРАЦИЯ...";
+    btn.disabled = true;
+
+    try {
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Dikon_GasSpring_${article}.pdf`);
+        
+    } catch (err) {
+        console.error("Ошибка PDF:", err);
+        alert("Не удалось создать PDF.");
+    } finally {
+        btn.innerText = oldText;
+        btn.disabled = false;
+    }
+}
 </script>
 
 </body>
