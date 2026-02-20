@@ -834,8 +834,8 @@
     let l1 = p.l;
 
     if (conn === "threaded") {
-        const sideA = document.getElementById('attach-a').value.split('|');
-        const sideB = document.getElementById('attach-b').value.split('|');
+        const sideA = document.getElementById('attach-b').value.split('|');
+        const sideB = document.getElementById('attach-a').value.split('|');
         
         // НОВАЯ ЛОГИКА ДЛЯ СТОРОНЫ A
         let codeA = (sideA[0] === "none" || sideA[0].startsWith("thread-")) 
