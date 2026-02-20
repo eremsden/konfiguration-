@@ -53,8 +53,8 @@
     display: grid;
     grid-template-areas: 
         "sideA visual sideB"    /* 1-й ряд: наконечники слева, чертеж по центру, наконечники справа */
-        "params params params"  /* 2-й ряд: параметры на всю ширину */
-        "results results results"; /* 3-й ряд: результаты на всю ширину */
+        ". params ."  /* 2-й ряд: параметры на всю ширину */
+        ". results ."; /* 3-й ряд: результаты на всю ширину */
     grid-template-columns: 240px 1fr 240px; 
     gap: 20px;
     align-items: start;
@@ -340,7 +340,7 @@
             margin-top: 0;        /* Убираем отступ сверху у блока */
             margin-bottom: 0;
             position: relative;
-            top: 118px;            /* Сдвигаем блок относительно его нормальной позиции */
+            top: 119px;            /* Сдвигаем блок относительно его нормальной позиции */
             /* top: 20px;  - опустить блок */
             /* top: -10px; - поднять блок */
         }
@@ -365,6 +365,15 @@
                 top: 0;
             }
         }
+        /* Опускаем чертеж */
+.center-visual {
+    margin-top: 50px; /* регулируйте это значение */
+}
+
+/* Опускаем блок с параметрами */
+.center-params {
+    margin-top: 20px; /* регулируйте это значение */
+}
     </style>
 </head>
 <body>
