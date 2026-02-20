@@ -50,15 +50,15 @@
 
         /* СЕТКА КОНФИГУРАТОРА */
         .config-grid {
-            display: grid;
-            grid-template-areas: 
-                "sideA params sideB"
-                "sideA visual sideB"
-                "sideA results sideB";
-            grid-template-columns: 240px 1fr 240px; 
-            gap: 20px;
-            align-items: start;
-        }
+    display: grid;
+    grid-template-areas: 
+        "sideA visual sideB"    /* 1-й ряд: наконечники слева, чертеж по центру, наконечники справа */
+        "params params params"  /* 2-й ряд: параметры на всю ширину */
+        "results results results"; /* 3-й ряд: результаты на всю ширину */
+    grid-template-columns: 240px 1fr 240px; 
+    gap: 20px;
+    align-items: start;
+}
 
         .side-a { grid-area: sideA; }
         .side-b { grid-area: sideB; }
@@ -323,14 +323,14 @@
         }
         /* Двигаем только текст (label) */
         .side-a > label {
-            margin-top: 125px;     /* Отступ сверху для текста */
+            margin-top: 1px;     /* Отступ сверху для текста */
             margin-bottom: -100px;   /* Расстояние от текста до блока */
             position: relative;
             /* top: 0; */         /* Можно использовать для точной настройки */
         }
 
         .side-b > label {
-            margin-top: 125px;     /* Отступ сверху для текста */
+            margin-top: 1px;     /* Отступ сверху для текста */
             margin-bottom: -1px;   /* Расстояние от текста до блока */
             position: relative;
         }
