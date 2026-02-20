@@ -762,24 +762,55 @@
     if (sel.options.length <= 2) { // только заголовок и разделитель
         sel.add(new Option("Нет доступных наконечников", "none|0"));
     }
+    updateTipImages();
 }
-    function updateTipImages() {
-        const series = document.getElementById('series').value;
-        const conn = document.getElementById('connection').value;
-        document.getElementById('img-spring').src = `img/springs/${series}-${conn}.png`;
+    
+    // Добавьте новую функцию для проверки, выбран ли наконечник
+function isTipSelected(side) {
+    const selectId = side === 'a' ? 'attach-a' : 'attach-b';
+    const val = document.getElementById(selectId).value.split('|')[0];
+    
+    // Если это заголовок или разделитель (пустое значение) или none
+    return val && val !== '' && !val.startsWith('thread-') && val !== 'none';
+}
 
-        if (conn === "threaded") {
-            const valA = document.getElementById('attach-a').value.split('|')[0];
-            const valB = document.getElementById('attach-b').value.split('|')[0];
-            const tipA = attachments.find(a => a.id === valA);
-            const tipB = attachments.find(a => a.id === valB);
-            if (tipA) document.getElementById('img-a').src = tipA.img;
-            if (tipB) document.getElementById('img-b').src = tipB.img;
-        } else {
-            document.getElementById('img-a').src = "img/tips/welded-eye.png";
-            document.getElementById('img-b').src = "img/tips/welded-eye.png";
+// Обновите функцию updateTipImages
+function updateTipImages() {
+    const series = document.getElementById('series').value;
+    const conn = document.getElementById('connection').value;
+    document.getElementById('img-spring').src = `img/springs/${series}-${conn}.png`;
+
+    if (conn === "threaded") {
+        const valA = document.getElementById('attach-a').value.split('|')[0];
+        const valB = document.getElementById('attach-b').value.split('|')[0];
+        const tipA = attachments.find(a => a.id === valA);
+        const tipB = attachments.find(a => a.id === valB);
+        
+        // Обновляем изображения
+        if (tipA) document.getElementById('img-a').src = tipA.img;
+        if (tipB) document.getElementById('img-b').src = tipB.img;
+        
+        // Управляем видимостью кнопок "ПОКАЗАТЬ ЧЕРТЕЖ"
+        const zoomHintA = document.querySelector('#box-a .zoom-hint');
+        const zoomHintB = document.querySelector('#box-b .zoom-hint');
+        
+        if (zoomHintA) {
+            zoomHintA.style.display = isTipSelected('a') ? 'flex' : 'none';
         }
+        if (zoomHintB) {
+            zoomHintB.style.display = isTipSelected('b') ? 'flex' : 'none';
+        }
+    } else {
+        document.getElementById('img-a').src = "img/tips/welded-eye.png";
+        document.getElementById('img-b').src = "img/tips/welded-eye.png";
+        
+        // Для сварного соединения всегда показываем кнопки
+        const zoomHintA = document.querySelector('#box-a .zoom-hint');
+        const zoomHintB = document.querySelector('#box-b .zoom-hint');
+        if (zoomHintA) zoomHintA.style.display = 'flex';
+        if (zoomHintB) zoomHintB.style.display = 'flex';
     }
+}
 
     function openDetail(side) {
         const conn = document.getElementById('connection').value;
@@ -874,8 +905,24 @@
         l1 = p.l;
     }
     document.getElementById('order-code').innerText = code;
+
+// НОВАЯ ЛОГИКА ДЛЯ ОТОБРАЖЕНИЯ L ИЛИ L1
+const sideAval = document.getElementById('attach-b').value.split('|')[0];
+const sideBval = document.getElementById('attach-a').value.split('|')[0];
+
+// Проверяем, выбраны ли "Без наконечника" с обеих сторон
+// "Без наконечника" это thread-... или none
+const isBothSidesPlain = 
+    (sideAval.startsWith('thread-') || sideAval === 'none' || sideAval === '') && 
+    (sideBval.startsWith('thread-') || sideBval === 'none' || sideBval === '');
+
+if (isBothSidesPlain) {
+    document.getElementById('calc-result').innerText = `L (длина без учета резьбы): ${p.l.toFixed(1)} мм`;
+} else {
     document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
-    document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
+}
+
+document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
 }
     function validateForce() {
     const series = document.getElementById('series').value;
@@ -986,7 +1033,23 @@ async function downloadPDF() {
     const dimsSelect = document.getElementById('dimensions-select');
     const dimsText = dimsSelect.options[dimsSelect.selectedIndex].text;
     const force = document.getElementById('force').value + " N";
-    const l1 = document.getElementById('calc-result').innerText;
+    
+    // ПОЛУЧАЕМ ЗНАЧЕНИЕ L1 ИЗ РЕЗУЛЬТАТА
+    let l1 = document.getElementById('calc-result').innerText;
+    
+    // ПРОВЕРЯЕМ, ВЫБРАНЫ ЛИ "БЕЗ НАКОНЕЧНИКА" С ОБЕИХ СТОРОН
+    const sideAval = document.getElementById('attach-b').value.split('|')[0];
+    const sideBval = document.getElementById('attach-a').value.split('|')[0];
+    
+    const isBothSidesPlain = 
+        (sideAval.startsWith('thread-') || sideAval === 'none' || sideAval === '') && 
+        (sideBval.startsWith('thread-') || sideBval === 'none' || sideBval === '');
+    
+    // ЕСЛИ С ОБЕИХ СТОРОН РЕЗЬБА, СТАВИМ ПРОЧЕРК
+    if (isBothSidesPlain) {
+        l1 = '— (без наконечников)';
+    }
+    
     const connType = document.getElementById('connection').value === 'threaded' ? 'Резьбовое' : 'Сварное';
     
     // Получаем названия наконечников
@@ -1003,7 +1066,7 @@ async function downloadPDF() {
     }
 
     // 3. Заполняем шаблон
-    document.getElementById('pdf-date').innerText = new Date().toLocaleDateString();
+    document.getElementById('pdf-date').innerText = new Date().toLocaleDateString('ru-RU');
     document.getElementById('pdf-article').innerText = article;
     document.getElementById('pdf-series').innerText = series;
     document.getElementById('pdf-dims').innerText = dimsText;
@@ -1037,7 +1100,9 @@ async function downloadPDF() {
     try {
         const canvas = await html2canvas(element, {
             scale: 2,
-            useCORS: true
+            useCORS: true,
+            logging: false,
+            allowTaint: false
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
@@ -1046,11 +1111,11 @@ async function downloadPDF() {
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`Dikon_GasSpring_${article}.pdf`);
+        pdf.save(`Dikon_GasSpring_${article.replace(/\//g, '-')}.pdf`);
         
     } catch (err) {
         console.error("Ошибка PDF:", err);
-        alert("Не удалось создать PDF.");
+        alert("Не удалось создать PDF. Пожалуйста, попробуйте еще раз.");
     } finally {
         btn.innerText = oldText;
         btn.disabled = false;
