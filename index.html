@@ -720,49 +720,35 @@
     const sel = document.getElementById(id);
     sel.innerHTML = "";
     
-    // Определяем, для какой стороны заполняем
-    // id="attach-a" это сторона B (шток) - левая колонка
-    // id="attach-b" это сторона A (трубка) - правая колонка
-    const isLeftSide = id === 'attach-a'; // true для левой колонки (шток)
-    
-    // Добавляем заголовок "ПОДСОЕДИНЕНИЯ" (disabled, чтобы нельзя было выбрать)
+    // Создаем заголовок как "пустой" активный пункт по умолчанию
     const headerOption = document.createElement('option');
-    headerOption.value = "";
+    headerOption.value = ""; 
     headerOption.text = "ПОДСОЕДИНЕНИЯ";
-    headerOption.disabled = true;
-    headerOption.selected = true; // Делаем его выбранным по умолчанию
+    headerOption.selected = true; 
     sel.appendChild(headerOption);
     
-    // Добавляем разделитель (опционально)
+    // Разделитель
     const separatorOption = document.createElement('option');
     separatorOption.value = "";
     separatorOption.text = "──────────────────────";
     separatorOption.disabled = true;
     sel.appendChild(separatorOption);
     
-    // Фильтруем и добавляем все наконечники
+    const isLeftSide = id === 'attach-a'; // true для левой колонки (шток)
+    
     attachments.filter(a => {
-        // Проверяем, подходит ли по серии
         if (!a.series.includes(series)) return false;
-        
-        // Для резьбы проверяем соответствие стороне
         if (a.id.startsWith('thread-')) {
-            // Для левой колонки (шток) нужны id с суффиксом -b
-            // Для правой колонки (трубка) нужны id с суффиксом -a
             return isLeftSide ? a.id.endsWith('-b') : a.id.endsWith('-a');
         }
-        
-        // Для всех остальных наконечников (не резьба) - показываем везде
         return true;
     }).forEach(a => {
         sel.add(new Option(`${a.name} (+${a.dist}мм)`, `${a.id}|${a.dist}`));
     });
     
-    // Если после фильтрации ничего не добавилось
-    if (sel.options.length <= 2) { // только заголовок и разделитель
+    if (sel.options.length <= 2) {
         sel.add(new Option("Нет доступных наконечников", "none|0"));
     }
-    updateTipImages();
 }
     
     // Добавьте новую функцию для проверки, выбран ли наконечник
@@ -774,41 +760,47 @@ function isTipSelected(side) {
     return val && val !== '' && !val.startsWith('thread-') && val !== 'none';
 }
 
-// Обновите функцию updateTipImages
 function updateTipImages() {
     const series = document.getElementById('series').value;
     const conn = document.getElementById('connection').value;
+    
+    // Основная картинка пружины
     document.getElementById('img-spring').src = `img/springs/${series}-${conn}.png`;
 
     if (conn === "threaded") {
-        const valA = document.getElementById('attach-a').value.split('|')[0];
-        const valB = document.getElementById('attach-b').value.split('|')[0];
+        const valAraw = document.getElementById('attach-a').value; // Сторона B (Шток)
+        const valBraw = document.getElementById('attach-b').value; // Сторона A (Трубка)
+        
+        const valA = valAraw ? valAraw.split('|')[0] : "";
+        const valB = valBraw ? valBraw.split('|')[0] : "";
+        
         const tipA = attachments.find(a => a.id === valA);
         const tipB = attachments.find(a => a.id === valB);
         
-        // Обновляем изображения
-        if (tipA) document.getElementById('img-a').src = tipA.img;
-        if (tipB) document.getElementById('img-b').src = tipB.img;
+        // Обновляем картинку для Стороны B (Шток)
+        if (valA && tipA) {
+            document.getElementById('img-a').src = tipA.img;
+        } else {
+            document.getElementById('img-a').src = "img/tips/none.png";
+        }
+
+        // Обновляем картинку для Стороны A (Трубка)
+        if (valB && tipB) {
+            document.getElementById('img-b').src = tipB.img;
+        } else {
+            document.getElementById('img-b').src = "img/tips/none.png";
+        }
         
-        // Управляем видимостью кнопок "ПОКАЗАТЬ ЧЕРТЕЖ"
+        // Видимость кнопок зума
         const zoomHintA = document.querySelector('#box-a .zoom-hint');
         const zoomHintB = document.querySelector('#box-b .zoom-hint');
+        if (zoomHintA) zoomHintA.style.display = isTipSelected('a') ? 'flex' : 'none';
+        if (zoomHintB) zoomHintB.style.display = isTipSelected('b') ? 'flex' : 'none';
         
-        if (zoomHintA) {
-            zoomHintA.style.display = isTipSelected('a') ? 'flex' : 'none';
-        }
-        if (zoomHintB) {
-            zoomHintB.style.display = isTipSelected('b') ? 'flex' : 'none';
-        }
     } else {
+        // Для сварного типа
         document.getElementById('img-a').src = "img/tips/welded-eye.png";
         document.getElementById('img-b').src = "img/tips/welded-eye.png";
-        
-        // Для сварного соединения всегда показываем кнопки
-        const zoomHintA = document.querySelector('#box-a .zoom-hint');
-        const zoomHintB = document.querySelector('#box-b .zoom-hint');
-        if (zoomHintA) zoomHintA.style.display = 'flex';
-        if (zoomHintB) zoomHintB.style.display = 'flex';
     }
 }
 
@@ -872,58 +864,61 @@ function updateTipImages() {
     const dimIdx = document.getElementById('dimensions-select').value;
     
     if (!springCatalog[conn] || !springCatalog[conn][series] || !springCatalog[conn][series][dimIdx]) {
-        document.getElementById('order-code').innerText = "Ошибка выбора";
+        document.getElementById('order-code').innerText = "---";
         document.getElementById('calc-result').innerText = "L1: -- мм";
         return;
     }
     
     const p = springCatalog[conn][series][dimIdx];
     const force = document.getElementById('force').value || "???";
-    if (!p) return;
-
-    let code = "";
-    let l1 = p.l;
 
     if (conn === "threaded") {
-        const sideA = document.getElementById('attach-b').value.split('|');
-        const sideB = document.getElementById('attach-a').value.split('|');
+        const sideAraw = document.getElementById('attach-b').value; // Трубка
+        const sideBraw = document.getElementById('attach-a').value; // Шток
         
-        // НОВАЯ ЛОГИКА ДЛЯ СТОРОНЫ A
+        // Если хотя бы одна сторона не выбрана (стоит "ПОДСОЕДИНЕНИЯ")
+        if (!sideAraw || !sideBraw) {
+            document.getElementById('order-code').innerText = "---";
+            document.getElementById('calc-result').innerText = "Выберите наконечники";
+            return;
+        }
+
+        const sideA = sideAraw.split('|');
+        const sideB = sideBraw.split('|');
+        
         let codeA = (sideA[0] === "none" || sideA[0].startsWith("thread-")) 
             ? "AM" + seriesLimits[series].thread.replace('M','') 
             : sideA[0].split('-')[0];
         
-        // НОВАЯ ЛОГИКА ДЛЯ СТОРОНЫ B
         let codeB = (sideB[0] === "none" || sideB[0].startsWith("thread-")) 
             ? "BM" + seriesLimits[series].thread.replace('M','') 
             : sideB[0].split('-')[1] || sideB[0].replace('A','B');
         
-        l1 += (parseFloat(sideA[1]) || 0) + (parseFloat(sideB[1]) || 0);
-        code = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
+        const l1 = p.l + (parseFloat(sideA[1]) || 0) + (parseFloat(sideB[1]) || 0);
+        
+        document.getElementById('order-code').innerText = `${series}-${p.t}-${p.r}-${codeA}-${codeB}-${force}N`;
+        
+        // Проверка на "Без наконечника" для отображения L или L1
+        const isBothPlain = sideA[0].startsWith('thread-') && sideB[0].startsWith('thread-');
+        if (isBothPlain) {
+            document.getElementById('calc-result').innerText = `L (длина без учета резьбы): ${p.l.toFixed(1)} мм`;
+        } else {
+            document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
+        }
     } else {
-        code = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
-        l1 = p.l;
+        // Сварное соединение
+        document.getElementById('order-code').innerText = `${series}-${p.t}-${p.r}-${p.a}-${p.b}-${force}N`;
+        document.getElementById('calc-result').innerText = `L1 (между осями): ${p.l.toFixed(1)} мм`;
     }
-    document.getElementById('order-code').innerText = code;
 
-// НОВАЯ ЛОГИКА ДЛЯ ОТОБРАЖЕНИЯ L ИЛИ L1
-const sideAval = document.getElementById('attach-b').value.split('|')[0];
-const sideBval = document.getElementById('attach-a').value.split('|')[0];
-
-// Проверяем, выбраны ли "Без наконечника" с обеих сторон
-// "Без наконечника" это thread-... или none
-const isBothSidesPlain = 
-    (sideAval.startsWith('thread-') || sideAval === 'none' || sideAval === '') && 
-    (sideBval.startsWith('thread-') || sideBval === 'none' || sideBval === '');
-
-if (isBothSidesPlain) {
-    document.getElementById('calc-result').innerText = `L (длина без учета резьбы): ${p.l.toFixed(1)} мм`;
-} else {
-    document.getElementById('calc-result').innerText = `L1 (между осями): ${l1.toFixed(1)} мм`;
+    document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
 }
 
-document.getElementById('spec-info').innerHTML = `Параметры: Шток Ø${seriesLimits[series].rod}мм / Трубка Ø${seriesLimits[series].tube}мм.`;
-}
+
+    
+
+
+
     function validateForce() {
     const series = document.getElementById('series').value;
     const lim = seriesLimits[series];
