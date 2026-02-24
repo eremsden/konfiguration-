@@ -1026,27 +1026,27 @@ async function downloadPDF() {
     }
     const p = springCatalog[connTypeKey][series][dimIdx];
 
-    // 1. Длина пружины (L)
+    // --- 1. Длина пружины (L) ---
     const lenL = p.l + " мм";
 
-    // 2. Длина с креплениями (L1)
+    // --- 2. Длина с креплениями (L1) ---
     let lenL1 = "";
     
+    // Получаем значения из селектов (для резьбового)
+    const sideAval = document.getElementById('attach-b').value.split('|'); // Трубка (Side A)
+    const sideBval = document.getElementById('attach-a').value.split('|'); // Шток (Side B)
+
     if (connTypeKey === 'welded') {
-        // Если сварное: L1 = L
-        lenL1 = p.l + " мм";
+        // Если сварное: ставим прочерк
+        lenL1 = "—";
     } else {
-        // Если резьбовое: считаем добавку наконечников
-        const sideAval = document.getElementById('attach-b').value.split('|'); // Трубка (Side A)
-        const sideBval = document.getElementById('attach-a').value.split('|'); // Шток (Side B)
-        
-        // Проверяем, выбраны ли "без наконечников" (thread-...)
+        // Проверяем, выбраны ли "без наконечника" (thread-...) или "none"
         const isPlainA = !sideAval[0] || sideAval[0] === 'none' || sideAval[0].startsWith('thread-');
         const isPlainB = !sideBval[0] || sideBval[0] === 'none' || sideBval[0].startsWith('thread-');
 
         if (isPlainA && isPlainB) {
-            // Если оба без наконечников -> L1 = L
-            lenL1 = p.l + " мм";
+            // Если с обеих сторон нет наконечников: ставим прочерк
+            lenL1 = "—";
         } else {
             // Иначе считаем сумму
             const distA = parseFloat(sideAval[1]) || 0;
@@ -1056,32 +1056,42 @@ async function downloadPDF() {
         }
     }
 
-    // 3. Ход
+    // --- 3. Остальные параметры ---
     const strokeVal = p.s + " мм";
-
-    // 4. Диаметры
     const lim = seriesLimits[series];
     const diamVal = `Шток Ø${lim.rod} мм / Трубка Ø${lim.tube} мм`;
-
-    // 5. Тип соединения
     const connText = (connTypeKey === 'threaded') ? "Резьбовое" : "Сварное";
 
-    // Названия наконечников
-    let nameRod = "Сварная проушина"; // Сторона B (Шток)
-    let nameTube = "Сварная проушина"; // Сторона А (Трубка)
+    // --- 4. Названия и КАРТИНКИ (Чертежи) ---
+    let nameRod = "Сварная проушина"; 
+    let nameTube = "Сварная проушина";
+    // Пути по умолчанию (для сварного или если нет выбора)
+    let srcRod = "img/tips/welded-eye.png"; 
+    let srcTube = "img/tips/welded-eye.png";
 
     if (connTypeKey === 'threaded') {
         const selRod = document.getElementById('attach-a'); 
         const selTube = document.getElementById('attach-b');
+        
         nameRod = selRod.options[selRod.selectedIndex].text;
         nameTube = selTube.options[selTube.selectedIndex].text;
+
+        // Поиск объектов в массиве attachments для получения чертежа (.detail)
+        const idRod = sideBval[0];
+        const idTube = sideAval[0];
+
+        const itemRod = attachments.find(x => x.id === idRod);
+        const itemTube = attachments.find(x => x.id === idTube);
+
+        // Если нашли — берем detail, иначе оставляем дефолт или пустую
+        if (itemRod && itemRod.detail) srcRod = itemRod.detail;
+        if (itemTube && itemTube.detail) srcTube = itemTube.detail;
     }
 
-    // 3. Заполняем шаблон PDF
+    // --- 5. Заполняем шаблон PDF ---
     document.getElementById('pdf-date').innerText = new Date().toLocaleDateString('ru-RU');
     document.getElementById('pdf-article').innerText = document.getElementById('order-code').innerText;
     
-    // Новые поля таблицы
     document.getElementById('pdf-len-l').innerText = lenL;
     document.getElementById('pdf-len-l1').innerText = lenL1;
     document.getElementById('pdf-stroke').innerText = strokeVal;
@@ -1089,15 +1099,17 @@ async function downloadPDF() {
     document.getElementById('pdf-conn').innerText = connText;
     document.getElementById('pdf-force').innerText = force;
 
-    // Картинки и названия наконечников
+    // Заполняем блоки картинок
     document.getElementById('pdf-name-rod').innerText = nameRod;
-    document.getElementById('pdf-img-rod').src = document.getElementById('img-a').src;
+    document.getElementById('pdf-img-rod').src = srcRod; // Используем найденный чертеж
+
     document.getElementById('pdf-name-tube').innerText = nameTube;
-    document.getElementById('pdf-img-tube').src = document.getElementById('img-b').src;
+    document.getElementById('pdf-img-tube').src = srcTube; // Используем найденный чертеж
+    
+    // Основная картинка (остается как есть)
     document.getElementById('pdf-main-img').src = document.getElementById('img-spring').src;
 
-
-    // 4. Генерируем PDF
+    // --- 6. Генерируем PDF ---
     const { jsPDF } = window.jspdf;
     const element = document.getElementById('pdf-template');
     
@@ -1130,6 +1142,7 @@ async function downloadPDF() {
         btn.disabled = false;
     }
 }
+
 </script>
 
 </body>
