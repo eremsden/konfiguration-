@@ -796,38 +796,30 @@ function updateTipImages() {
 }
 
    function openDetail(side) {
-        const conn = document.getElementById('connection').value;
-        
-        // 1. Проверка на сварное соединение
-        if (conn === 'welded') {
-            alert("Для сварного соединения нет детальных чертежей наконечников");
-            return;
-        }
-
-        const selectId = side === 'a' ? 'attach-a' : 'attach-b';
-        const rawVal = document.getElementById(selectId).value;
-        
-        // Если ничего не выбрано (например, заголовок селекта)
-        if (!rawVal) return;
-
-        const val = rawVal.split('|')[0];
-
-        // 2. Проверка: Если выбрано "Без наконечника" (резьба) или "нет доступных"
-        if (val.startsWith('thread-') || val === 'none') {
-            alert("Для данного типа нет наконечников");
-            return;
-        }
-
-        // 3. Поиск и открытие чертежа
-        const tip = attachments.find(a => a.id === val);
-        if (tip && tip.detail) {
-            document.getElementById('modal-title').innerText = "Чертеж наконечника";
-            document.getElementById('modal-img').src = tip.detail;
-            document.getElementById('detailModal').style.display = 'flex';
-        } else {
-            alert("Чертеж не найден");
-        }
+    const conn = document.getElementById('connection').value;
+    
+    // Блокируем только для Сварного (там нет выбора наконечников)
+    if (conn === 'welded') {
+        alert("Для сварного соединения нет детальных чертежей наконечников");
+        return;
     }
+
+    const selectId = side === 'a' ? 'attach-a' : 'attach-b';
+    const val = document.getElementById(selectId).value.split('|')[0];
+    
+    // Ищем объект в базе
+    const tip = attachments.find(a => a.id === val);
+
+    // Если объект найден и у него есть поле detail — показываем модалку
+    // (Даже если это thread-..., у него в базе прописан detail)
+    if (tip && tip.id !== 'none' && tip.detail) {
+        document.getElementById('modal-title').innerText = "Чертеж";
+        document.getElementById('modal-img').src = tip.detail;
+        document.getElementById('detailModal').style.display = 'flex';
+    } else {
+        alert("Для этого варианта нет детального чертежа");
+    }
+}
 
     function openMainDrawing() {
         const currentSrc = document.getElementById('img-spring').src;
